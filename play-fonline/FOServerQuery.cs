@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace PlayFO
 {
@@ -12,20 +13,24 @@ namespace PlayFO
     {
         private List<FOGameInfo> Servers;
 
+        private string configURL;
+        private string statusURL;
+
+        Logger logger = LogManager.GetLogger("FOServerQuery");
+
         public FOServerQuery(string configURL, string statusURL)
         {
-            string jsonServers;
-            string jsonStatus;
+            this.configURL = configURL;
+            this.statusURL = statusURL;
+            update();
+        }
 
-            using (var webClient = new System.Net.WebClient())
-            {
-                webClient.Proxy = null;
-                jsonServers = webClient.DownloadString(configURL);
-                jsonStatus = webClient.DownloadString(statusURL);
-            }
+        public void update()
+        {
+            JsonFetcher jsonFetch = new JsonFetcher();
 
-            JObject o1 = JObject.Parse(jsonServers);
-            JObject o2 = JObject.Parse(jsonStatus);
+            JObject o1 = jsonFetch.downloadJson(configURL);
+            JObject o2 = jsonFetch.downloadJson(statusURL);
 
             Servers = new List<FOGameInfo>();
 
@@ -36,9 +41,12 @@ namespace PlayFO
                 {
                     server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
                 }
+                server.Id = ((JProperty)serverName).Name;
                 this.Servers.Add(server);
             }
         }
+
+        
 
         public List<FOGameInfo> GetOnlineServers()
         {

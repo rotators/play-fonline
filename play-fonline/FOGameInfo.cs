@@ -5,9 +5,23 @@ using System.Text;
 
 namespace PlayFO
 {
+    class FOPlayInfo
+    {
+
+    }
+
+    // .dat files and so on not supplied with game.
+    public class FOGameDependency
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Path { get; set; }
+    }
+
     class FOGameInstallInfo
     {
         public List<FOGameLaunchProgram> LaunchPrograms { get; set; }
+        public List<FOGameDependency> Dependencies { get; set; }
         public FOInstallScriptInfo InstallScript { get; set; }
         public List<String> Files {get; set; }
         public string Updated { get; set; }
@@ -28,6 +42,7 @@ namespace PlayFO
 
     class FOGameInfo
     {
+        public string Id { get; set; }
         public string Name { get; set;}
         public string Host { get; set; }
         public string Website { get; set; }

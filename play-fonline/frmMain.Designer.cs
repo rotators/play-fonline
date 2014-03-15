@@ -28,12 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnPlay = new System.Windows.Forms.Button();
-            this.btnGameConfig = new System.Windows.Forms.Button();
+            this.flowMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.btnInstall = new System.Windows.Forms.Button();
             this.btnOptions = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAbout = new System.Windows.Forms.Button();
             this.chkShowOffline = new System.Windows.Forms.CheckBox();
             this.lstGames = new BrightIdeasSoftware.ObjectListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -43,46 +41,28 @@
             this.olvColumn4 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvInstallPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn5 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.flowLayoutPanel1.SuspendLayout();
+            this.statusBar = new System.Windows.Forms.StatusStrip();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.statusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
+            this.statusBar.SuspendLayout();
             this.SuspendLayout();
             // 
-            // flowLayoutPanel1
+            // flowMenu
             // 
-            this.flowLayoutPanel1.Controls.Add(this.btnPlay);
-            this.flowLayoutPanel1.Controls.Add(this.btnGameConfig);
-            this.flowLayoutPanel1.Controls.Add(this.btnInstall);
-            this.flowLayoutPanel1.Controls.Add(this.btnOptions);
-            this.flowLayoutPanel1.Controls.Add(this.button1);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(5, 12);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(119, 395);
-            this.flowLayoutPanel1.TabIndex = 6;
-            // 
-            // btnPlay
-            // 
-            this.btnPlay.Enabled = false;
-            this.btnPlay.Location = new System.Drawing.Point(3, 3);
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(103, 28);
-            this.btnPlay.TabIndex = 10;
-            this.btnPlay.Text = "Play";
-            this.btnPlay.UseVisualStyleBackColor = true;
-            // 
-            // btnGameConfig
-            // 
-            this.btnGameConfig.Enabled = false;
-            this.btnGameConfig.Location = new System.Drawing.Point(3, 37);
-            this.btnGameConfig.Name = "btnGameConfig";
-            this.btnGameConfig.Size = new System.Drawing.Size(103, 28);
-            this.btnGameConfig.TabIndex = 11;
-            this.btnGameConfig.Text = "Game Config";
-            this.btnGameConfig.UseVisualStyleBackColor = true;
+            this.flowMenu.Controls.Add(this.btnInstall);
+            this.flowMenu.Controls.Add(this.btnOptions);
+            this.flowMenu.Controls.Add(this.btnAbout);
+            this.flowMenu.Location = new System.Drawing.Point(5, 12);
+            this.flowMenu.Name = "flowMenu";
+            this.flowMenu.Size = new System.Drawing.Size(119, 389);
+            this.flowMenu.TabIndex = 6;
             // 
             // btnInstall
             // 
             this.btnInstall.Enabled = false;
-            this.btnInstall.Location = new System.Drawing.Point(3, 71);
+            this.btnInstall.Location = new System.Drawing.Point(3, 3);
             this.btnInstall.Name = "btnInstall";
             this.btnInstall.Size = new System.Drawing.Size(103, 28);
             this.btnInstall.TabIndex = 8;
@@ -93,22 +73,22 @@
             // btnOptions
             // 
             this.btnOptions.Enabled = false;
-            this.btnOptions.Location = new System.Drawing.Point(3, 105);
+            this.btnOptions.Location = new System.Drawing.Point(3, 37);
             this.btnOptions.Name = "btnOptions";
             this.btnOptions.Size = new System.Drawing.Size(103, 28);
             this.btnOptions.TabIndex = 6;
             this.btnOptions.Text = "Options";
             this.btnOptions.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnAbout
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(3, 139);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 28);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "About";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnAbout.Enabled = false;
+            this.btnAbout.Location = new System.Drawing.Point(3, 71);
+            this.btnAbout.Name = "btnAbout";
+            this.btnAbout.Size = new System.Drawing.Size(103, 28);
+            this.btnAbout.TabIndex = 7;
+            this.btnAbout.Text = "About";
+            this.btnAbout.UseVisualStyleBackColor = true;
             // 
             // chkShowOffline
             // 
@@ -147,7 +127,7 @@
             this.lstGames.Location = new System.Drawing.Point(130, 35);
             this.lstGames.Name = "lstGames";
             this.lstGames.ShowGroups = false;
-            this.lstGames.Size = new System.Drawing.Size(662, 372);
+            this.lstGames.Size = new System.Drawing.Size(662, 366);
             this.lstGames.TabIndex = 7;
             this.lstGames.UseCompatibleStateImageBehavior = false;
             this.lstGames.UseHyperlinks = true;
@@ -157,6 +137,7 @@
             // olvName
             // 
             this.olvName.AspectName = "Name";
+            this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Name";
             // 
             // olvPlayers
@@ -167,6 +148,7 @@
             // olvColumn2
             // 
             this.olvColumn2.AspectName = "Website";
+            this.olvColumn2.FillsFreeSpace = true;
             this.olvColumn2.Hyperlink = true;
             this.olvColumn2.Text = "Website";
             // 
@@ -184,6 +166,7 @@
             // 
             this.olvInstallPath.AspectName = "InstallPath";
             this.olvInstallPath.DisplayIndex = 6;
+            this.olvInstallPath.FillsFreeSpace = true;
             this.olvInstallPath.Text = "Install Path";
             // 
             // olvColumn5
@@ -193,19 +176,48 @@
             this.olvColumn5.Hyperlink = true;
             this.olvColumn5.Text = "Source Code";
             // 
+            // statusBar
+            // 
+            this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusBarLabel});
+            this.statusBar.Location = new System.Drawing.Point(0, 404);
+            this.statusBar.Name = "statusBar";
+            this.statusBar.Size = new System.Drawing.Size(804, 22);
+            this.statusBar.TabIndex = 9;
+            this.statusBar.Text = "statusStrip1";
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(257, 8);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(87, 23);
+            this.btnRefresh.TabIndex = 10;
+            this.btnRefresh.Text = "Update list";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // statusBarLabel
+            // 
+            this.statusBarLabel.Name = "statusBarLabel";
+            this.statusBarLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 423);
+            this.ClientSize = new System.Drawing.Size(804, 426);
+            this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.statusBar);
             this.Controls.Add(this.chkShowOffline);
             this.Controls.Add(this.lstGames);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.flowMenu);
             this.Name = "frmMain";
             this.Text = "Play FOnline 0.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
-            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).EndInit();
+            this.statusBar.ResumeLayout(false);
+            this.statusBar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -213,10 +225,9 @@
 
         #endregion
 
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.FlowLayoutPanel flowMenu;
+        private System.Windows.Forms.Button btnAbout;
         private System.Windows.Forms.Button btnOptions;
-        private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.Button btnInstall;
         private System.Windows.Forms.CheckBox chkShowOffline;
         private BrightIdeasSoftware.ObjectListView lstGames;
@@ -227,7 +238,9 @@
         private BrightIdeasSoftware.OLVColumn olvColumn4;
         private BrightIdeasSoftware.OLVColumn olvColumn5;
         private BrightIdeasSoftware.OLVColumn olvInstallPath;
-        private System.Windows.Forms.Button btnGameConfig;
+        private System.Windows.Forms.StatusStrip statusBar;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
     }
 }
 
