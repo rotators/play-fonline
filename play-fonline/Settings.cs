@@ -36,13 +36,19 @@ namespace PlayFO
         public bool showOffline { get; set; }
     }
 
+    public class PathSettings
+    {
+        public string scripts { get; set; }
+        public string downloadTemp { get; set; }
+    }
+
     public class FOSettings
     {
-       // public string bootstrapURL { get; set; }
         public string installURL { get; set; }
         public string configURL { get; set; }
         public string statusURL { get; set; }
 
+        public PathSettings Paths { get; set; }
         public UISettings UI { get; set; }
         public List<FOGameDependency> Dependencies { get; set; }
         public List<InstalledGame> Games { get; set; }
@@ -56,13 +62,12 @@ namespace PlayFO
             Games.Add(game);
         }
 
-        public void AddDependency(string Name, string Path)
+        public void AddDependency(FOGameDependency depend, string Path)
         {
-            FOGameDependency dep =  new FOGameDependency();
-            dep.Name = Name;
-            dep.Path = Path;
+            FOGameDependency newDepend = depend;
+            newDepend.Path = Path;
             if (Dependencies == null) Dependencies = new List<FOGameDependency>();
-            Dependencies.Add(dep);
+            Dependencies.Add(newDepend);
         }
 
         public bool HasDependency(string Name)

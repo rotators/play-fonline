@@ -7,11 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using PlayFO.Scripts;
 using NLog;
+
 
 namespace PlayFO
 {
@@ -31,12 +34,26 @@ namespace PlayFO
             settings = SettingsManager.LoadSettings();
             logger.Info("Loading config {0}", SettingsManager.path);
 
-            LoadFormSettings();
+            if (settings.UI == null)
+            {
+                this.DesktopLocation = new Point(settings.UI.x, settings.UI.y);
+                this.Width = settings.UI.width;
+                this.Height = settings.UI.height;
+            }
+
+            if (settings.Paths == null)
+            {
+                string baseDir = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
+                settings.Paths = new PathSettings();
+                settings.Paths.scripts = baseDir + Path.DirectorySeparatorChar + "scripts";
+                settings.Paths.downloadTemp = baseDir + Path.DirectorySeparatorChar + "temp";
+            }
+
             UpdateGameList();
 
             JsonFetcher jsonFetch = new JsonFetcher();
             JObject o = jsonFetch.downloadJson(settings.installURL);
-            installHandler = new InstallHandler(JsonConvert.DeserializeObject <Dictionary<String, FOGameInstallInfo>>(o.ToString()));
+            installHandler = new InstallHandler(JsonConvert.DeserializeObject <Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
 
             this.olvInstallPath.AspectToStringConverter = delegate(object x)
             {
@@ -53,17 +70,6 @@ namespace PlayFO
                     return "Offline";
                 return Players.ToString();
             };
-
-
-        }
-
-        private void LoadFormSettings()
-        {
-            if (settings.UI == null) return;
-
-            this.DesktopLocation = new Point(settings.UI.x, settings.UI.y);
-            this.Width = settings.UI.width;
-            this.Height = settings.UI.height;
         }
 
         private void Exit()
@@ -135,6 +141,7 @@ namespace PlayFO
         private void lstGames_SelectedIndexChanged(object sender, EventArgs e)
         {
             FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
+            if (Game == null) return;
 
             bool installed = !String.IsNullOrWhiteSpace(Game.InstallPath);
 
@@ -173,8 +180,6 @@ namespace PlayFO
             Process process = new Process();
             process.StartInfo = new ProcessStartInfo(currentGame.InstallPath + Path.DirectorySeparatorChar + btn.Tag);
             process.Start();
-           // MessageBox.Show(btn.Tag.ToString());
-            
         }
 
         private void btnInstall_Click(object sender, EventArgs e)
@@ -185,17 +190,18 @@ namespace PlayFO
                 MessageBox.Show("No game selected!");
             }
 
-            //Script script = new Script();
             DialogResult Result = MessageBox.Show("Is this game already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly.", "Game already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (Result == System.Windows.Forms.DialogResult.Yes)
             {
                 FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
                 FolderBrowser.ShowNewFolderButton = false;
-                DialogResult FolderResult = FolderBrowser.ShowDialog();
+                if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                    return;
 
                 if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
                 {
                     MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
+                    return;
                 }
 
                 foreach (FOGameDependency depend in installHandler.GetDependencies(Game.Id))
@@ -209,12 +215,55 @@ namespace PlayFO
                             if (OpenFile.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                                 return;
                             if (OpenFile.CheckFileExists)
-                                settings.AddDependency(depend.Name, OpenFile.FileName);
+                            {
+                                if (string.IsNullOrEmpty(depend.ScriptPath))
+                                {
+                                    if (!string.IsNullOrEmpty(depend.ScriptUrl))
+                                    {
+                                        using (var webClient = new System.Net.WebClient())
+                                        {
+                                            try
+                                            {
+                                                Uri uri = new Uri(depend.ScriptUrl);
+                                                string scriptName = uri.Segments[uri.Segments.Length - 1];
+                                                string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
+
+                                                if(!File.Exists(fullPath))
+                                                {
+                                                    webClient.Proxy = null;
+                                                    webClient.DownloadFile(depend.ScriptUrl, fullPath);
+                                                }
+                                                depend.ScriptPath = fullPath;
+                                            }
+                                            catch(WebException ex)
+                                            {
+                                                MessageBox.Show("Failed to download " + depend.ScriptUrl + ":" + ex.Message);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    else
+                                        MessageBox.Show("No script available for verifying dependency " + depend.Name);
+                                }
+
+                                ResolveHost resolveHost = new ResolveHost();
+                                bool chooseNew = false;
+                                do
+                                {
+                                    if (chooseNew) OpenFile.ShowDialog();
+                                    chooseNew = false;
+                                    if (!resolveHost.RunResolveScript(depend.ScriptPath, depend.Name, OpenFile.FileName))
+                                    {
+                                        chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
+                                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
+                                    }
+                                    
+                                } while(chooseNew);
+                                settings.AddDependency(depend, OpenFile.FileName);
+                            }
                         }
                         else
-                        {
                             return;
-                        }
                     }
                 }
 
@@ -229,6 +278,17 @@ namespace PlayFO
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             UpdateGameList();
+        }
+
+        private void lstGames_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo)e.Model;
+            if (String.IsNullOrEmpty(Game.InstallPath))
+            {
+                e.Item.ForeColor = Color.Gray;
+            }
+            //if (Game.Status.Players == -1)
+            //    e.Item.BackColor = Color.OrangeRed;
         }
     }
 }

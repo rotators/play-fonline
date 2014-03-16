@@ -5,16 +5,13 @@ using System.Text;
 
 namespace PlayFO
 {
-    class FOPlayInfo
-    {
-
-    }
-
     // .dat files and so on not supplied with game.
     public class FOGameDependency
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ScriptPath { get; set; } // Local path
+        public string ScriptUrl { get; set; } // For dependency checking scripts.
         public string Path { get; set; }
     }
 

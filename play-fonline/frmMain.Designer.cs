@@ -42,8 +42,8 @@
             this.olvInstallPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn5 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.statusBar = new System.Windows.Forms.StatusStrip();
-            this.btnRefresh = new System.Windows.Forms.Button();
             this.statusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
             this.statusBar.SuspendLayout();
@@ -132,6 +132,7 @@
             this.lstGames.UseCompatibleStateImageBehavior = false;
             this.lstGames.UseHyperlinks = true;
             this.lstGames.View = System.Windows.Forms.View.Details;
+            this.lstGames.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.lstGames_FormatRow);
             this.lstGames.SelectedIndexChanged += new System.EventHandler(this.lstGames_SelectedIndexChanged);
             // 
             // olvName
@@ -166,7 +167,6 @@
             // 
             this.olvInstallPath.AspectName = "InstallPath";
             this.olvInstallPath.DisplayIndex = 6;
-            this.olvInstallPath.FillsFreeSpace = true;
             this.olvInstallPath.Text = "Install Path";
             // 
             // olvColumn5
@@ -186,6 +186,11 @@
             this.statusBar.TabIndex = 9;
             this.statusBar.Text = "statusStrip1";
             // 
+            // statusBarLabel
+            // 
+            this.statusBarLabel.Name = "statusBarLabel";
+            this.statusBarLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // btnRefresh
             // 
             this.btnRefresh.Location = new System.Drawing.Point(257, 8);
@@ -195,11 +200,6 @@
             this.btnRefresh.Text = "Update list";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // statusBarLabel
-            // 
-            this.statusBarLabel.Name = "statusBarLabel";
-            this.statusBarLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // frmMain
             // 
