@@ -1,0 +1,49 @@
+{
+  "fonline": {
+    "install-data": {
+      "fode": {
+        "LaunchPrograms": [
+          {
+            "Name": "Game - Direct3D",
+            "File": "FOnlineD3D.exe"
+          },
+          {
+            "Name": "Game - OpenGL",
+            "File": "FOnline.exe"
+          },
+          {
+            "Name": "FOConfig",
+            "File": "FOConfig.exe"
+          },
+          {
+            "Name": "FODEconfig",
+            "File": "FODEconfig.exe"
+          }
+        ],
+        "Dependencies": [
+          {
+            "Name": "MASTER.DAT",
+            "Description": "MASTER.DAT from Fallout 2",
+            "ScriptURL": "http://fodev.net/play/scripts/fo2-data.cs"
+          },
+          {
+            "Name": "CRITTER.DAT",
+            "Description": "CRITTER.DAT from Fallout 2",
+            "ScriptURL": "http://fodev.net/play/scripts/fo2-data.cs"
+          }
+        ],
+        "InstallScript": {
+          "ScriptUrl": "http://fodev.net/play/scripts/install-fode.cs",
+          "ScriptUpdated": "2014-03-15",
+          "ScriptVersion": "0.1"
+        },
+        "Files": [
+          "FODEconfig.exe",
+          "FOnline.exe",
+          "FOUpdater.exe"
+        ],
+        "Updated": "2014-03-15"
+      }
+    }
+  }
+}
