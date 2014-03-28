@@ -9,30 +9,37 @@ namespace PlayFO
     class InstallHandler
     {
         private Dictionary<String, FOGameInstallInfo> InstallInfo;
+        NLog.Logger logger = NLog.LogManager.GetLogger("InstallHandler");
 
         public InstallHandler(Dictionary<String, FOGameInstallInfo> InstallInfo)
         {
             this.InstallInfo = InstallInfo;
         }
 
-        public List<FOGameLaunchProgram> GetLaunchPrograms(string game)
+        public List<FOGameLaunchProgram> GetLaunchPrograms(string gameId)
         {
-            return InstallInfo[game].LaunchPrograms;
+            return InstallInfo[gameId].LaunchPrograms;
         }
 
-        public List<FOGameDependency> GetDependencies(string game)
+        public List<FOGameDependency> GetDependencies(string gameId)
         {
-            return InstallInfo[game].Dependencies;
+            return InstallInfo[gameId].Dependencies;
         }
 
-        public bool HasInstallInfo(string game)
+        public bool HasInstallInfo(string gameId)
         {
-            return InstallInfo.ContainsKey(game);
+            return InstallInfo.ContainsKey(gameId);
         }
 
-        public bool VerifyGameFolderPath(string game, string path)
+        public bool VerifyGameFolderPath(string gameId, string path)
         {
-            foreach (String file in InstallInfo[game].Files)
+            if (!InstallInfo.ContainsKey(gameId))
+            {
+                logger.Error("No install data available for " + gameId);
+                return false;
+            }
+
+            foreach (String file in InstallInfo[gameId].Files)
             {
                 if (!File.Exists(path + "/" + file))
                     return false;

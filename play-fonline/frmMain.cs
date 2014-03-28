@@ -182,97 +182,135 @@ namespace PlayFO
             process.Start();
         }
 
-        private void btnInstall_Click(object sender, EventArgs e)
+        private void MessageBoxError(string Message)
         {
-            FOGameInfo Game = (FOGameInfo) lstGames.SelectedObject;
-            if(Game == null)
+            MessageBox.Show(Message);
+            logger.Error(Message);
+        }
+
+        private bool InstallGame(FOGameInfo Game)
+        {
+            // Check for dependencies and handle them...
+            foreach (FOGameDependency depend in installHandler.GetDependencies(Game.Id))
             {
-                MessageBox.Show("No game selected!");
+                if (!settings.HasDependency(depend.Name))
+                {
+                    if (MessageBox.Show(depend.Description + " is required to run this game. " + Environment.NewLine + "Do you have it?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        OpenFileDialog OpenFile = new OpenFileDialog();
+                        OpenFile.Filter = depend.Name + "|*.*";
+                        if (OpenFile.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                            return false;
+                        if (OpenFile.CheckFileExists)
+                        {
+                            if (string.IsNullOrEmpty(depend.ScriptPath))
+                            {
+                                if (!string.IsNullOrEmpty(depend.ScriptUrl))
+                                {
+                                    using (var webClient = new System.Net.WebClient())
+                                    {
+                                        try
+                                        {
+                                            Uri uri = new Uri(depend.ScriptUrl);
+                                            string scriptName = uri.Segments[uri.Segments.Length - 1];
+                                            string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
+
+                                            if (!File.Exists(fullPath))
+                                            {
+                                                webClient.Proxy = null;
+                                                webClient.DownloadFile(depend.ScriptUrl, fullPath);
+                                            }
+                                            depend.ScriptPath = fullPath;
+                                        }
+                                        catch (WebException ex)
+                                        {
+                                            MessageBoxError("Failed to download " + depend.ScriptUrl + ":" + ex.Message);
+                                            return false;
+                                        }
+                                    }
+                                }
+                                else
+                                    MessageBoxError("No script available for verifying dependency " + depend.Name);
+                            }
+
+                            ResolveHost resolveHost = new ResolveHost();
+                            bool chooseNew = false;
+                            do
+                            {
+                                if (chooseNew) OpenFile.ShowDialog();
+                                chooseNew = false;
+                                if (!resolveHost.RunResolveScript(depend.ScriptPath, depend.Name, OpenFile.FileName))
+                                {
+                                    chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
+                                        MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
+                                }
+
+                            } while (chooseNew);
+                            settings.AddDependency(depend, OpenFile.FileName);
+                        }
+                    }
+                    else
+                        return false;
+                }
             }
 
-            DialogResult Result = MessageBox.Show("Is this game already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly.", "Game already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            // Fetch and run install script
+
+
+            return true;
+        }
+
+        private bool AddGame(FOGameInfo Game)
+        {
+            if (!installHandler.HasInstallInfo(Game.Id))
+            {
+                MessageBoxError("No install info available for " + Game.Name + " :(" + Environment.NewLine + "Please report this, so that it can be implemented.");
+                return false;
+            }
+
+            DialogResult Result = MessageBox.Show("Is " + Game.Name + " already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly. This assumes that the game is working in its current state.", Game.Name + " already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
+            FolderBrowser.ShowNewFolderButton = false;
+            if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                return false;
+
+            Game.InstallPath = FolderBrowser.SelectedPath;
+
             if (Result == System.Windows.Forms.DialogResult.Yes)
             {
-                FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
-                FolderBrowser.ShowNewFolderButton = false;
-                if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                    return;
-
                 if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
                 {
                     MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
-                    return;
+                    return false;
                 }
-
-                foreach (FOGameDependency depend in installHandler.GetDependencies(Game.Id))
-                {
-                    if (!settings.HasDependency(depend.Name))
-                    {
-                        if (MessageBox.Show(depend.Description + " is required to run this game. " + Environment.NewLine + "Do you have it?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Yes)
-                        {
-                            OpenFileDialog OpenFile = new OpenFileDialog();
-                            OpenFile.Filter = depend.Name + "|*.*";
-                            if (OpenFile.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                                return;
-                            if (OpenFile.CheckFileExists)
-                            {
-                                if (string.IsNullOrEmpty(depend.ScriptPath))
-                                {
-                                    if (!string.IsNullOrEmpty(depend.ScriptUrl))
-                                    {
-                                        using (var webClient = new System.Net.WebClient())
-                                        {
-                                            try
-                                            {
-                                                Uri uri = new Uri(depend.ScriptUrl);
-                                                string scriptName = uri.Segments[uri.Segments.Length - 1];
-                                                string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
-
-                                                if(!File.Exists(fullPath))
-                                                {
-                                                    webClient.Proxy = null;
-                                                    webClient.DownloadFile(depend.ScriptUrl, fullPath);
-                                                }
-                                                depend.ScriptPath = fullPath;
-                                            }
-                                            catch(WebException ex)
-                                            {
-                                                MessageBox.Show("Failed to download " + depend.ScriptUrl + ":" + ex.Message);
-                                                return;
-                                            }
-                                        }
-                                    }
-                                    else
-                                        MessageBox.Show("No script available for verifying dependency " + depend.Name);
-                                }
-
-                                ResolveHost resolveHost = new ResolveHost();
-                                bool chooseNew = false;
-                                do
-                                {
-                                    if (chooseNew) OpenFile.ShowDialog();
-                                    chooseNew = false;
-                                    if (!resolveHost.RunResolveScript(depend.ScriptPath, depend.Name, OpenFile.FileName))
-                                    {
-                                        chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
-                                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
-                                    }
-                                    
-                                } while(chooseNew);
-                                settings.AddDependency(depend, OpenFile.FileName);
-                            }
-                        }
-                        else
-                            return;
-                    }
-                }
-
-                Game.InstallPath = FolderBrowser.SelectedPath;
-
-                MessageBox.Show("Successfully added " + Game.Name + "!");
-                settings.InstalledGame(Game.Id, Game.InstallPath);
-                SettingsManager.SaveSettings(settings);
             }
+            else if (Result == System.Windows.Forms.DialogResult.No)
+            {
+                if (!Directory.Exists(FolderBrowser.SelectedPath))
+                {
+                    MessageBox.Show(FolderBrowser.SelectedPath + " is not a valid directory.");
+                    return false;
+                }
+            }
+            else
+                return false;
+
+            logger.Info("Successfully added " + Game.Name + "!");
+            MessageBox.Show("Successfully added " + Game.Name + "!");
+            settings.InstalledGame(Game.Id, Game.InstallPath);
+            SettingsManager.SaveSettings(settings);
+            return true;
+        }
+
+
+        private void btnInstall_Click(object sender, EventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo) lstGames.SelectedObject;
+            if (Game == null)
+                MessageBox.Show("No game selected!");
+            else
+                AddGame(Game);
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -287,6 +325,22 @@ namespace PlayFO
             {
                 e.Item.ForeColor = Color.Gray;
             }
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
+        {
+            Process.Start("http://fodev.net");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Sandbox snd = new Sandbox();
+            snd.testDownloadScript(settings.Paths.downloadTemp, @"H:\FOnline2");
         }
     }
 }

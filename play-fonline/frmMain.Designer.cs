@@ -44,6 +44,7 @@
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.statusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.linkFoDev = new System.Windows.Forms.LinkLabel();
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
             this.statusBar.SuspendLayout();
@@ -89,6 +90,7 @@
             this.btnAbout.TabIndex = 7;
             this.btnAbout.Text = "About";
             this.btnAbout.UseVisualStyleBackColor = true;
+            this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
             // chkShowOffline
             // 
@@ -127,7 +129,7 @@
             this.lstGames.Location = new System.Drawing.Point(130, 35);
             this.lstGames.Name = "lstGames";
             this.lstGames.ShowGroups = false;
-            this.lstGames.Size = new System.Drawing.Size(662, 366);
+            this.lstGames.Size = new System.Drawing.Size(662, 355);
             this.lstGames.TabIndex = 7;
             this.lstGames.UseCompatibleStateImageBehavior = false;
             this.lstGames.UseHyperlinks = true;
@@ -201,18 +203,32 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // linkFoDev
+            // 
+            this.linkFoDev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkFoDev.AutoSize = true;
+            this.linkFoDev.Location = new System.Drawing.Point(709, 12);
+            this.linkFoDev.Name = "linkFoDev";
+            this.linkFoDev.Size = new System.Drawing.Size(83, 13);
+            this.linkFoDev.TabIndex = 14;
+            this.linkFoDev.TabStop = true;
+            this.linkFoDev.Text = "http://fodev.net";
+            this.linkFoDev.MouseClick += new System.Windows.Forms.MouseEventHandler(this.linkFoDev_MouseClick);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 426);
+            this.Controls.Add(this.linkFoDev);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.chkShowOffline);
             this.Controls.Add(this.lstGames);
             this.Controls.Add(this.flowMenu);
+            this.MinimumSize = new System.Drawing.Size(460, 250);
             this.Name = "frmMain";
-            this.Text = "Play FOnline 0.1";
+            this.Text = "Play FOnline 0.11";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.flowMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).EndInit();
@@ -241,6 +257,7 @@
         private System.Windows.Forms.StatusStrip statusBar;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
+        private System.Windows.Forms.LinkLabel linkFoDev;
     }
 }
 
