@@ -30,16 +30,16 @@ namespace PlayFO
             JsonFetcher jsonFetch = new JsonFetcher();
 
             JObject o1 = jsonFetch.downloadJson(configURL);
-            //JObject o2 = jsonFetch.downloadJson(statusURL);
+            JObject o2 = jsonFetch.downloadJson(statusURL);
 
             Servers = new List<FOGameInfo>();
 
             foreach (JToken serverName in o1["fonline"]["config"]["server"].Children())
             {
                 FOGameInfo server = JsonConvert.DeserializeObject<FOGameInfo>(serverName.First.ToString());
-                if (!server.Closed && o1["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
+                if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {
-                    server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o1["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
+                    server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
                 }
                 server.Id = ((JProperty)serverName).Name;
                 if (String.IsNullOrEmpty(server.Website))

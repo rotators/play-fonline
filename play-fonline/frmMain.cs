@@ -287,8 +287,6 @@ namespace PlayFO
             {
                 e.Item.ForeColor = Color.Gray;
             }
-            //if (Game.Status.Players == -1)
-            //    e.Item.BackColor = Color.OrangeRed;
         }
     }
 }
