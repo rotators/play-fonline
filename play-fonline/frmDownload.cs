@@ -70,12 +70,6 @@ namespace PlayFO
 
         void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            if (e.TotalBytesToReceive < 1024)
-            {
-                
-                this.Close();
-            }
-
             progressFile.Value = e.ProgressPercentage;
             lock (this.winformLocker)
             {
