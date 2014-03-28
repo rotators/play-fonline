@@ -119,20 +119,6 @@ namespace PlayFO
             return (result.TrimEnd(trimEnd));
         }
 
-        #region Events
-
-        private void buttonCancel_Click( object sender, EventArgs e )
-        {
-            Button self = (Button)sender;
-        }
-
-        void frmUpdater_Load( object sender, EventArgs e )
-        {
-            this.backgroundWorker.RunWorkerAsync();
-        }
-
-        #endregion
-
         private void buttonCancel_Click_1(object sender, EventArgs e)
         {
             webClient.CancelAsync();

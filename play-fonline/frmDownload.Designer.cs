@@ -125,7 +125,6 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FOPlay Downloader";
-            this.Load += new System.EventHandler(this.frmUpdater_Load);
             this.groupMain.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
