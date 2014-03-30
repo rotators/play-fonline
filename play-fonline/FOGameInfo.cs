@@ -5,13 +5,20 @@ using System.Text;
 
 namespace PlayFO
 {
+    public class FOScriptInfo
+    {
+        public string Checksum { get; set; } // SHA-1
+        public string Path { get; set; }
+        public string Url { get; set; }
+        public string Version { get; set; }
+    }
+
     // .dat files and so on not supplied with game.
     public class FOGameDependency
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ScriptPath { get; set; } // Local path
-        public string ScriptUrl { get; set; } // For dependency checking scripts.
+        public FOScriptInfo Script { get; set; }
         public string Path { get; set; }
     }
 
@@ -19,7 +26,7 @@ namespace PlayFO
     {
         public List<FOGameLaunchProgram> LaunchPrograms { get; set; }
         public List<FOGameDependency> Dependencies { get; set; }
-        public FOInstallScriptInfo InstallScript { get; set; }
+        public FOScriptInfo InstallScript { get; set; }
         public List<String> Files {get; set; }
         public string Updated { get; set; }
     }
@@ -28,13 +35,6 @@ namespace PlayFO
     {
         public string Name { get; set; }
         public string File { get; set; }
-    }
-
-    class FOInstallScriptInfo
-    {
-        public string ScriptUrl { get; set; }
-        public string ScriptUpdated { get; set; }
-        public string ScriptVersion { get; set; }
     }
 
     class FOGameInfo

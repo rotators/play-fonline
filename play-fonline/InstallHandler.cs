@@ -26,6 +26,11 @@ namespace PlayFO
             return InstallInfo[gameId].Dependencies;
         }
 
+        public FOScriptInfo GetInstallScriptInfo(string gameId)
+        {
+            return InstallInfo[gameId].InstallScript;
+        }
+
         public bool HasInstallInfo(string gameId)
         {
             return InstallInfo.ContainsKey(gameId);

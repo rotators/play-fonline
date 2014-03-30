@@ -7,9 +7,7 @@ using CSScriptLibrary;
 // Scripts for resolving dependencies.
 namespace PlayFO.Scripts
 {
-    public interface IResolveHost 
-    { 
-    }
+    public interface IResolveHost  { }
     public interface IResolveScript
     {
         bool IsValidResource(string name, string filePath);

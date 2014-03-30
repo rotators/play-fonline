@@ -65,7 +65,10 @@ namespace PlayFO
             if (e.Error != null)
                 labelDetailed.Text = e.Error.Message;
             else
+            {
                 labelDetailed.Text = "Download completed.";
+                this.Close();
+            }
         }
 
         void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)

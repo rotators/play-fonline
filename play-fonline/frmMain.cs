@@ -70,6 +70,9 @@ namespace PlayFO
                     return "Offline";
                 return Players.ToString();
             };
+
+
+
         }
 
         private void Exit()
@@ -103,6 +106,13 @@ namespace PlayFO
                 else
                     servers = query.GetOnlineServers();
 
+                // Always add installed
+                foreach (FOGameInfo server in query.GetServers(true))
+                {
+                    if (settings.IsInstalled(server.Id))
+                        servers.Add(server);
+                }
+
                 foreach (FOGameInfo server in servers)
                 {
                     if (settings.IsInstalled(server.Id))
@@ -127,10 +137,7 @@ namespace PlayFO
 
         private void chkShowOffline_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkShowOffline.Checked)
-                lstGames.SetObjects(query.GetServers(true));
-            else
-                lstGames.SetObjects(query.GetOnlineServers());
+            UpdateGameList();
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -188,6 +195,14 @@ namespace PlayFO
             logger.Error(Message);
         }
 
+        private bool DownloadInstallScript(string url, string localPath)
+        {
+            WebClient webClient = new WebClient();
+            webClient.Proxy = null;
+            webClient.DownloadFile(url, localPath);
+            return true;
+        }
+
         private bool InstallGame(FOGameInfo Game)
         {
             // Check for dependencies and handle them...
@@ -203,28 +218,26 @@ namespace PlayFO
                             return false;
                         if (OpenFile.CheckFileExists)
                         {
-                            if (string.IsNullOrEmpty(depend.ScriptPath))
+                            if (string.IsNullOrEmpty(depend.Script.Path))
                             {
-                                if (!string.IsNullOrEmpty(depend.ScriptUrl))
+                                if (!string.IsNullOrEmpty(depend.Script.Url))
                                 {
                                     using (var webClient = new System.Net.WebClient())
                                     {
                                         try
                                         {
-                                            Uri uri = new Uri(depend.ScriptUrl);
-                                            string scriptName = uri.Segments[uri.Segments.Length - 1];
-                                            string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
+                                            string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl(depend.Script.Url);
 
                                             if (!File.Exists(fullPath))
                                             {
                                                 webClient.Proxy = null;
-                                                webClient.DownloadFile(depend.ScriptUrl, fullPath);
+                                                webClient.DownloadFile(depend.Script.Url, fullPath);
                                             }
-                                            depend.ScriptPath = fullPath;
+                                            depend.Script.Path = fullPath;
                                         }
                                         catch (WebException ex)
                                         {
-                                            MessageBoxError("Failed to download " + depend.ScriptUrl + ":" + ex.Message);
+                                            MessageBoxError("Failed to download " + depend.Script.Url + ":" + ex.Message);
                                             return false;
                                         }
                                     }
@@ -239,7 +252,7 @@ namespace PlayFO
                             {
                                 if (chooseNew) OpenFile.ShowDialog();
                                 chooseNew = false;
-                                if (!resolveHost.RunResolveScript(depend.ScriptPath, depend.Name, OpenFile.FileName))
+                                if (!resolveHost.RunResolveScript(depend.Script.Path, depend.Name, OpenFile.FileName))
                                 {
                                     chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
                                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
@@ -255,8 +268,48 @@ namespace PlayFO
             }
 
             // Fetch and run install script
+            FOScriptInfo installScriptInfo = installHandler.GetInstallScriptInfo(Game.Id);
+            string scriptName = Utils.GetFilenameFromUrl(installScriptInfo.Url);
+            string localScriptPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
 
+            // File exists, verify if checksum is the same...
+            if (File.Exists(localScriptPath))
+            {
+                string localChecksum = Utils.GetSHA1Checksum(localScriptPath);
+                if (localChecksum != installScriptInfo.Checksum)
+                {
+                    logger.Info("Local checksum of {0} = {1}, remote is {2}. More recent script is available or local file has been modified."
+                        , localScriptPath, localChecksum, installScriptInfo.Checksum);
 
+                    DownloadInstallScript(installScriptInfo.Url, localScriptPath);
+                }
+            }
+            else
+            {
+                if (!DownloadInstallScript(installScriptInfo.Url, localScriptPath))
+                    return false;
+            }
+
+            if (!File.Exists(localScriptPath))
+            {
+                MessageBoxError(String.Format("Failed to download {0} to {1}", installScriptInfo.Url, localScriptPath));
+            }
+
+            InstallHost installHost = new InstallHost();
+            installHost.RunInstallScript(localScriptPath, settings.Paths.downloadTemp, Game.InstallPath);
+
+            // Copy dependencies
+            foreach (FOGameDependency installDepend in settings.Dependencies)
+            {
+                string filename = Path.GetFileName(installDepend.Path);
+                string destPath = Game.InstallPath + Path.DirectorySeparatorChar + filename;
+                if (File.Exists(destPath))
+                    logger.Info("{0} already exists, skipping copy", destPath);
+
+                logger.Info("Copying {0} to {1}...", installDepend.Path, destPath);
+                File.Copy(installDepend.Path, destPath);
+                logger.Info("Copied {0} to {1}", installDepend.Path, destPath);
+            }
             return true;
         }
 
@@ -284,6 +337,10 @@ namespace PlayFO
                     MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
                     return false;
                 }
+
+                string msg = "Successfully addded " + Game.Name + "!";
+                MessageBox.Show(msg);
+                logger.Info(msg);
             }
             else if (Result == System.Windows.Forms.DialogResult.No)
             {
@@ -292,12 +349,17 @@ namespace PlayFO
                     MessageBox.Show(FolderBrowser.SelectedPath + " is not a valid directory.");
                     return false;
                 }
+
+                if (!InstallGame(Game))
+                    return false;
+
+                string msg = "Successfully installed " + Game.Name + "!";
+                MessageBox.Show(msg);
+                logger.Info(msg);
             }
             else
                 return false;
 
-            logger.Info("Successfully added " + Game.Name + "!");
-            MessageBox.Show("Successfully added " + Game.Name + "!");
             settings.InstalledGame(Game.Id, Game.InstallPath);
             SettingsManager.SaveSettings(settings);
             return true;
@@ -339,8 +401,7 @@ namespace PlayFO
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Sandbox snd = new Sandbox();
-            snd.testDownloadScript(settings.Paths.downloadTemp, @"H:\FOnline2");
+
         }
     }
 }

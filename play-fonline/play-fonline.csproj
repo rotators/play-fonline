@@ -110,6 +110,8 @@
     <Compile Include="Scripts\ResolveHost.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TestJson.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Win32.cs" />
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>

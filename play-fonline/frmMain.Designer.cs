@@ -228,7 +228,7 @@
             this.Controls.Add(this.flowMenu);
             this.MinimumSize = new System.Drawing.Size(460, 250);
             this.Name = "frmMain";
-            this.Text = "Play FOnline 0.11";
+            this.Text = "Play FOnline 0.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.flowMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).EndInit();
