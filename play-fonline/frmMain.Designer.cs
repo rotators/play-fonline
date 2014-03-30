@@ -145,7 +145,7 @@
             // 
             // olvPlayers
             // 
-            this.olvPlayers.AspectName = "Status.Players";
+            this.olvPlayers.AspectName = "Status.PlayersStr";
             this.olvPlayers.Text = "Players";
             // 
             // olvColumn2

@@ -63,13 +63,16 @@ namespace PlayFO
                 return Path;
             };
 
-            this.olvPlayers.AspectToStringConverter = delegate(object x)
+            /*this.olvPlayers.AspectToStringConverter = delegate(object x)
             {
                 int Players = (int)x;
                 if (Players == -1)
+                {
+                    
                     return "Offline";
+                }
                 return Players.ToString();
-            };
+            };*/
 
 
 
@@ -100,17 +103,18 @@ namespace PlayFO
             {
                 query = new FOServerQuery(settings.configURL, settings.statusURL);
                 List<FOGameInfo> servers;
-                
-                if(chkShowOffline.Checked)
+
+                if (chkShowOffline.Checked)
                     servers = query.GetServers(true);
                 else
-                    servers = query.GetOnlineServers();
-
-                // Always add installed
-                foreach (FOGameInfo server in query.GetServers(true))
                 {
-                    if (settings.IsInstalled(server.Id))
-                        servers.Add(server);
+                    servers = query.GetOnlineServers();
+                    // Always add installed, even if offline
+                    foreach (FOGameInfo server in query.GetServers(true))
+                    {
+                        if (settings.IsInstalled(server.Id))
+                            servers.Add(server);
+                    }
                 }
 
                 foreach (FOGameInfo server in servers)

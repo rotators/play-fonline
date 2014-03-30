@@ -40,6 +40,15 @@ namespace PlayFO
                 if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {
                     server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
+                    if (server.Status.IsOffline())
+                    {
+                        if (server.Status.Seen != -1)
+                            server.Status.PlayersStr = "Offline - Down for " + Utils.GetReadableTime(Utils.GetCurrentUnixTime() - server.Status.Seen);
+                        else
+                            server.Status.PlayersStr = "Offline";
+                    }
+                    else
+                        server.Status.PlayersStr = server.Status.Players.ToString();
                 }
                 server.Id = ((JProperty)serverName).Name;
                 if (String.IsNullOrEmpty(server.Website))

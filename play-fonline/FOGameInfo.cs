@@ -55,6 +55,9 @@ namespace PlayFO
 
     class FOGameStatus
     {
+        public bool IsOffline() { return (Players == -1); }
         public int Players { get; set; }
+        public string PlayersStr { get; set; }
+        public int Seen { get; set; }
     }
 }

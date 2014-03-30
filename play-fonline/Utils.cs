@@ -29,6 +29,15 @@ namespace PlayFO
             return unixTimestamp;
         }
 
+        public static string GetReadableTime(int seconds)
+        {
+            TimeSpan t = TimeSpan.FromSeconds(seconds);
+            if (t.Days > 0) return t.Days + " days";
+            if (t.Hours > 0) return t.Hours + " hours";
+            if (t.Minutes > 0) return t.Minutes + " minutes";
+            return seconds + " seconds";
+        }
+
         public static string GetSHA1Checksum(string fileName)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Open))
