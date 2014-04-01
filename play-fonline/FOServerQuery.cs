@@ -37,8 +37,13 @@ namespace PlayFO
             foreach (JToken serverName in o1["fonline"]["config"]["server"].Children())
             {
                 FOGameInfo server = JsonConvert.DeserializeObject<FOGameInfo>(serverName.First.ToString());
+
+                if (String.IsNullOrEmpty(server.Host) || server.Port == null) continue; // Usually placeholders.
+
                 if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {
+                    
+
                     server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
                     if (server.Status.IsOffline())
                     {
