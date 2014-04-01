@@ -5,6 +5,12 @@ using System.Text;
 
 namespace PlayFO
 {
+    public class FOLogoInfo
+    {
+        public string Path { get; set; }
+        public string Hash { get; set; }
+    }
+
     public class FOScriptInfo
     {
         public string Checksum { get; set; } // SHA-1
@@ -22,22 +28,23 @@ namespace PlayFO
         public string Path { get; set; }
     }
 
-    class FOGameInstallInfo
+    public class FOGameInstallInfo
     {
         public List<FOGameLaunchProgram> LaunchPrograms { get; set; }
         public List<FOGameDependency> Dependencies { get; set; }
         public FOScriptInfo InstallScript { get; set; }
         public List<String> Files {get; set; }
+        public Int64 InstallSize { get; set; }
         public string Updated { get; set; }
     }
 
-    class FOGameLaunchProgram
+    public class FOGameLaunchProgram
     {
         public string Name { get; set; }
         public string File { get; set; }
     }
 
-    class FOGameInfo
+    public class FOGameInfo
     {
         public string Id { get; set; }
         public string Name { get; set;}
@@ -53,7 +60,7 @@ namespace PlayFO
         public FOGameStatus Status { get; set; }
     }
 
-    class FOGameStatus
+    public class FOGameStatus
     {
         public bool IsOffline() { return (Players == -1); }
         public int Players { get; set; }

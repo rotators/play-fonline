@@ -9,15 +9,15 @@ namespace PlayFO.Scripts
     public interface IInstallHost { }
     public interface IInstallScript
     {
-        bool Install(string tempDir, string installDir);
+        bool Install(string game, string tempDir, string installDir);
     }
 
     class InstallHost : IInstallHost
     {
-        public bool RunInstallScript(string scriptFile, string tempDir, string installDir)
+        public bool RunInstallScript(string scriptFile, string game, string tempDir, string installDir)
         {
             IInstallScript script = (IInstallScript)CSScript.Load(scriptFile).CreateObject("Script");
-            return script.Install(tempDir, installDir);
+            return script.Install(game, tempDir, installDir);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace PlayFO
 {
-    class InstallHandler
+    public class InstallHandler
     {
         private Dictionary<String, FOGameInstallInfo> InstallInfo;
         NLog.Logger logger = NLog.LogManager.GetLogger("InstallHandler");

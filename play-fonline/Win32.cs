@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace PlayFO
 {
     // https://stackoverflow.com/questions/17615105/getting-text-entered-in-textbox-of-other-applications-using-c-sharp
-    public static class GetWindowText
+    public static class Win32
     {
         // Delegate we use to call methods when enumerating child windows.
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
@@ -21,6 +21,12 @@ namespace PlayFO
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, Int32 wParam, Int32 lParam);
 
         // Callback method used to collect a list of child windows we need to capture text from.
         private static bool EnumChildWindowsCallback(IntPtr handle, IntPtr pointer)
@@ -41,6 +47,11 @@ namespace PlayFO
 
             return true;
         }
+
+        /*public static IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle)
+        {
+            FindWindowEx(parentHandle, childAfter, className, windowTitle);
+        }*/
 
         // Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
         private static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
@@ -84,6 +95,18 @@ namespace PlayFO
 
             // Return the text as a string.
             return sb.ToString();
+        }
+
+
+        public static bool WindowContainsTextString(IntPtr handle, string text)
+        {
+            var childWindows = GetChildWindows(handle);
+            foreach (var childWindowText in childWindows.Select(GetText))
+            {
+                if (childWindowText.Contains(text))
+                    return true;
+            }
+            return false;
         }
 
         public static bool WindowContainsTextString(string windowTitle, string text)

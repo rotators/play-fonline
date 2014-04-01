@@ -23,6 +23,7 @@ namespace PlayFO
         FOSettings settings;
         FOServerQuery query;
         InstallHandler installHandler;
+        LogoManager logoManager;
         FOGameInfo currentGame;
 
         Logger logger = LogManager.GetLogger("UI::Main");
@@ -55,6 +56,8 @@ namespace PlayFO
             JObject o = jsonFetch.downloadJson(settings.installURL);
             installHandler = new InstallHandler(JsonConvert.DeserializeObject <Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
 
+            logoManager = new LogoManager("./logos", "http://fodev.net/status/json/logo/");
+
             this.olvInstallPath.AspectToStringConverter = delegate(object x)
             {
                 string Path = (string)x;
@@ -62,20 +65,6 @@ namespace PlayFO
                     return "Not installed/added";
                 return Path;
             };
-
-            /*this.olvPlayers.AspectToStringConverter = delegate(object x)
-            {
-                int Players = (int)x;
-                if (Players == -1)
-                {
-                    
-                    return "Offline";
-                }
-                return Players.ToString();
-            };*/
-
-
-
         }
 
         private void Exit()
@@ -300,7 +289,7 @@ namespace PlayFO
             }
 
             InstallHost installHost = new InstallHost();
-            installHost.RunInstallScript(localScriptPath, settings.Paths.downloadTemp, Game.InstallPath);
+            installHost.RunInstallScript(localScriptPath, Game.Name, settings.Paths.downloadTemp, Game.InstallPath);
 
             // Copy dependencies
             foreach (FOGameDependency installDepend in settings.Dependencies)
@@ -327,15 +316,15 @@ namespace PlayFO
 
             DialogResult Result = MessageBox.Show("Is " + Game.Name + " already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly. This assumes that the game is working in its current state.", Game.Name + " already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
-            FolderBrowser.ShowNewFolderButton = false;
-            if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                return false;
-
-            Game.InstallPath = FolderBrowser.SelectedPath;
-
             if (Result == System.Windows.Forms.DialogResult.Yes)
             {
+                FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
+                FolderBrowser.ShowNewFolderButton = false;
+                if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                    return false;
+
+                Game.InstallPath = FolderBrowser.SelectedPath;
+
                 if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
                 {
                     MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
@@ -348,14 +337,19 @@ namespace PlayFO
             }
             else if (Result == System.Windows.Forms.DialogResult.No)
             {
-                if (!Directory.Exists(FolderBrowser.SelectedPath))
+                /*if (!Directory.Exists(FolderBrowser.SelectedPath))
                 {
                     MessageBox.Show(FolderBrowser.SelectedPath + " is not a valid directory.");
                     return false;
-                }
+                }*/
 
-                if (!InstallGame(Game))
+                frmInstallMain installMain = new frmInstallMain(Game, installHandler, logoManager, settings.Paths.scripts);
+                installMain.ShowDialog();
+
+                if (!installMain.IsSuccess)
                     return false;
+                //if (!InstallGame(Game))
+                //    return false;
 
                 string msg = "Successfully installed " + Game.Name + "!";
                 MessageBox.Show(msg);
