@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
-namespace PlayFO
+namespace PlayFOnline
 {
     static class SettingsManager
     {
@@ -55,10 +55,10 @@ namespace PlayFO
 
         public void InstalledGame(string Id, string Path)
         {
-            InstalledGame game = new PlayFO.InstalledGame();
+            InstalledGame game = new PlayFOnline.InstalledGame();
             game.Id = Id;
             game.Path = Path;
-            if (Games == null) Games = new List<PlayFO.InstalledGame>();
+            if (Games == null) Games = new List<PlayFOnline.InstalledGame>();
             Games.Add(game);
         }
 

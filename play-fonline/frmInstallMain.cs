@@ -9,9 +9,9 @@ using System.Windows.Forms;
 using NLog;
 using System.Net;
 using System.IO;
-using PlayFO.Scripts;
+using PlayFOnline.Scripts;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     public partial class frmInstallMain : Form
     {

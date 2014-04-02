@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 // Based on https://github.com/wipe2238/FOUpdaterEx/blob/master/FOUpdater/frmMain.cs
 // Thanks Wipe!
-namespace PlayFO
+namespace PlayFOnline
 {
     public partial class frmDownload : Form
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     // https://stackoverflow.com/questions/17615105/getting-text-entered-in-textbox-of-other-applications-using-c-sharp
     public static class Win32

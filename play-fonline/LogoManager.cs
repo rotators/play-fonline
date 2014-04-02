@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using NLog;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     public class LogoManager
     {

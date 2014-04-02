@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     class FOServerQuery
     {
@@ -38,7 +38,7 @@ namespace PlayFO
             {
                 FOGameInfo server = JsonConvert.DeserializeObject<FOGameInfo>(serverName.First.ToString());
 
-                if (String.IsNullOrEmpty(server.Host) || server.Port == null) continue; // Usually placeholders.
+                if (String.IsNullOrEmpty(server.Host) || server.Port == 0) continue; // Usually placeholders.
 
                 if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {

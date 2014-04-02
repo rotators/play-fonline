@@ -1,4 +1,4 @@
-﻿namespace PlayFO
+﻿namespace PlayFOnline
 {
     partial class frmAbout
     {

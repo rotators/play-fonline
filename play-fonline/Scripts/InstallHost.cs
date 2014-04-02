@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using CSScriptLibrary;
 
-namespace PlayFO.Scripts
+namespace PlayFOnline.Scripts
 {
     public interface IInstallHost { }
     public interface IInstallScript

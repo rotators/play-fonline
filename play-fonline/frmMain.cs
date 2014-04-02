@@ -12,11 +12,11 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
-using PlayFO.Scripts;
+using PlayFOnline.Scripts;
 using NLog;
 
 
-namespace PlayFO
+namespace PlayFOnline
 {
     public partial class frmMain : Form
     {
@@ -28,12 +28,25 @@ namespace PlayFO
 
         Logger logger = LogManager.GetLogger("UI::Main");
 
+        private void setTitle(int players = -1, int servers = -1)
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assemblyName = assembly.GetName();
+            this.Text = string.Format("Play FOnline {0}.{1}.{2}", assemblyName.Version.Major, assemblyName.Version.Minor, assemblyName.Version.Build);
+            if (players != -1)
+            {
+                this.Text += " - " + players + " players online on " + servers + " servers";
+            }
+        }
+
         public frmMain()
         {
             InitializeComponent();
 
             settings = SettingsManager.LoadSettings();
             logger.Info("Loading config {0}", SettingsManager.path);
+
+            setTitle();
 
             if (settings.UI == null)
             {
@@ -96,25 +109,16 @@ namespace PlayFO
                 if (chkShowOffline.Checked)
                     servers = query.GetServers(true);
                 else
-                {
-                    servers = query.GetOnlineServers();
-                    // Always add installed, even if offline
-                    foreach (FOGameInfo server in query.GetServers(true))
-                    {
-                        if (settings.IsInstalled(server.Id))
-                            servers.Add(server);
-                    }
-                }
+                    servers = query.GetServers(true).Where(x => !x.Status.IsOffline() || settings.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
 
-                foreach (FOGameInfo server in servers)
-                {
-                    if (settings.IsInstalled(server.Id))
-                        server.InstallPath = settings.GetInstallPath(server.Id);
-                }
+                servers.Where(x => settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = settings.GetInstallPath(x.Id));
+
+                setTitle(servers.Sum(x => x.Status.Players), servers.Count(x => !x.Status.IsOffline()));
 
                 lstGames.SetObjects(servers);
                 lstGames.Refresh();
                 UpdateStatusBar("Updated gamelist.");
+
                 return;
             }
             catch (WebException e)
@@ -323,13 +327,13 @@ namespace PlayFO
                 if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                     return false;
 
-                Game.InstallPath = FolderBrowser.SelectedPath;
-
                 if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
                 {
                     MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
                     return false;
                 }
+
+                Game.InstallPath = FolderBrowser.SelectedPath;
 
                 string msg = "Successfully addded " + Game.Name + "!";
                 MessageBox.Show(msg);
@@ -337,19 +341,11 @@ namespace PlayFO
             }
             else if (Result == System.Windows.Forms.DialogResult.No)
             {
-                /*if (!Directory.Exists(FolderBrowser.SelectedPath))
-                {
-                    MessageBox.Show(FolderBrowser.SelectedPath + " is not a valid directory.");
-                    return false;
-                }*/
-
                 frmInstallMain installMain = new frmInstallMain(Game, installHandler, logoManager, settings.Paths.scripts);
                 installMain.ShowDialog();
 
                 if (!installMain.IsSuccess)
                     return false;
-                //if (!InstallGame(Game))
-                //    return false;
 
                 string msg = "Successfully installed " + Game.Name + "!";
                 MessageBox.Show(msg);
@@ -395,11 +391,6 @@ namespace PlayFO
         private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
         {
             Process.Start("http://fodev.net");
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

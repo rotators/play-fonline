@@ -5,7 +5,7 @@ using System.Text;
 using CSScriptLibrary;
 
 // Scripts for resolving dependencies.
-namespace PlayFO.Scripts
+namespace PlayFOnline.Scripts
 {
     public interface IResolveHost  { }
     public interface IResolveScript

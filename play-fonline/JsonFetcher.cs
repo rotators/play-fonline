@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     class JsonFetcher
     {

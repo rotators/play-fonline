@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PlayFO
+namespace PlayFOnline
 {
     public partial class frmPath : Form
     {
