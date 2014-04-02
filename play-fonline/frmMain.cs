@@ -46,6 +46,8 @@ namespace PlayFOnline
             settings = SettingsManager.LoadSettings();
             logger.Info("Loading config {0}", SettingsManager.path);
 
+            WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
+
             setTitle();
 
             if (settings.UI == null)
@@ -223,7 +225,7 @@ namespace PlayFOnline
                                     {
                                         try
                                         {
-                                            string fullPath = settings.Paths.scripts + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl(depend.Script.Url);
+                                            string fullPath = Path.Combine(settings.Paths.scripts, Utils.GetFilenameFromUrl(depend.Script.Url));
 
                                             if (!File.Exists(fullPath))
                                             {
@@ -267,7 +269,7 @@ namespace PlayFOnline
             // Fetch and run install script
             FOScriptInfo installScriptInfo = installHandler.GetInstallScriptInfo(Game.Id);
             string scriptName = Utils.GetFilenameFromUrl(installScriptInfo.Url);
-            string localScriptPath = settings.Paths.scripts + Path.DirectorySeparatorChar + scriptName;
+            string localScriptPath = Path.Combine(settings.Paths.scripts, scriptName);
 
             // File exists, verify if checksum is the same...
             if (File.Exists(localScriptPath))

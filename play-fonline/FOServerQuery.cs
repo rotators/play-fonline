@@ -70,7 +70,7 @@ namespace PlayFOnline
             return this.Servers.Where(x => x.Status != null && x.Status.Players != -1).ToList();
         }
             
-        public List<FOGameInfo> GetServers(bool onlyOpen)
+        public List<FOGameInfo> GetServers(bool onlyOpen = true)
         {
             if (onlyOpen) return this.Servers.Where(x => !x.Closed && !x.Singleplayer).ToList();
             return this.Servers;
