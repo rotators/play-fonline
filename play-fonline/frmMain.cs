@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.IO;
-using PlayFOnline.Scripts;
 using NLog;
-
+using PlayFOnline.Scripts;
 
 namespace PlayFOnline
 {
     public partial class frmMain : Form
     {
-        FOSettings settings;
-        FOServerQuery query;
-        InstallHandler installHandler;
-        LogoManager logoManager;
-        FOGameInfo currentGame;
+        private FOSettings settings;
+        private FOServerQuery query;
+        private InstallHandler installHandler;
+        private LogoManager logoManager;
+        private FOGameInfo currentGame;
 
-        Logger logger = LogManager.GetLogger("UI::Main");
+        private Logger logger = LogManager.GetLogger("UI::Main");
 
         #region frmMain handlers
 
@@ -86,7 +82,6 @@ namespace PlayFOnline
 
         private void btnAbout_Click(object sender, EventArgs e)
         {
-
         }
 
         private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
@@ -94,7 +89,7 @@ namespace PlayFOnline
             Process.Start("http://fodev.net");
         }
 
-        #endregion
+        #endregion frmMain handlers
 
         private void setTitle(int players = -1, int servers = -1)
         {
@@ -300,7 +295,6 @@ namespace PlayFOnline
                                     chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
                                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
                                 }
-
                             } while (chooseNew);
                             settings.AddDependency(depend, OpenFile.FileName);
                         }
