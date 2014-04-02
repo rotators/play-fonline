@@ -28,6 +28,74 @@ namespace PlayFOnline
 
         Logger logger = LogManager.GetLogger("UI::Main");
 
+        #region frmMain handlers
+
+        public frmMain()
+        {
+            InitializeComponent();
+            LoadStuff();
+        }
+
+        private void chkShowOffline_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGameList();
+        }
+
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Exit();
+        }
+
+        private void lstGames_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
+            if (Game == null) return;
+            SelectGame(Game);
+        }
+
+        private void btnLaunchProgram_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            Process process = new Process();
+            process.StartInfo = new ProcessStartInfo(currentGame.InstallPath + Path.DirectorySeparatorChar + btn.Tag);
+            process.Start();
+        }
+
+        private void btnInstall_Click(object sender, EventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
+            if (Game == null)
+                MessageBox.Show("No game selected!");
+            else
+                AddGame(Game);
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            UpdateGameList();
+        }
+
+        private void lstGames_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo)e.Model;
+            if (String.IsNullOrEmpty(Game.InstallPath))
+            {
+                e.Item.ForeColor = Color.Gray;
+            }
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
+        {
+            Process.Start("http://fodev.net");
+        }
+
+        #endregion
+
         private void setTitle(int players = -1, int servers = -1)
         {
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -39,10 +107,8 @@ namespace PlayFOnline
             }
         }
 
-        public frmMain()
+        private void LoadStuff()
         {
-            InitializeComponent();
-
             settings = SettingsManager.LoadSettings();
             logger.Info("Loading config {0}", SettingsManager.path);
 
@@ -69,7 +135,7 @@ namespace PlayFOnline
 
             JsonFetcher jsonFetch = new JsonFetcher();
             JObject o = jsonFetch.downloadJson(settings.installURL);
-            installHandler = new InstallHandler(JsonConvert.DeserializeObject <Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
+            installHandler = new InstallHandler(JsonConvert.DeserializeObject<Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
 
             logoManager = new LogoManager("./logos", "http://fodev.net/status/json/logo/");
 
@@ -135,21 +201,8 @@ namespace PlayFOnline
             UpdateStatusBar("Failed to update gamelist.");
         }
 
-        private void chkShowOffline_CheckedChanged(object sender, EventArgs e)
+        private void SelectGame(FOGameInfo Game)
         {
-            UpdateGameList();
-        }
-
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Exit();
-        }
-
-        private void lstGames_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
-            if (Game == null) return;
-
             bool installed = !String.IsNullOrWhiteSpace(Game.InstallPath);
 
             btnInstall.Enabled = !installed;
@@ -158,9 +211,7 @@ namespace PlayFOnline
             var controls = flowMenu.Controls;
 
             flowMenu.Controls.Clear();
-
             flowMenu.Update();
-
             if (installed)
             {
                 foreach (FOGameLaunchProgram program in installHandler.GetLaunchPrograms(Game.Id))
@@ -179,14 +230,6 @@ namespace PlayFOnline
             flowMenu.Controls.Add(btnAbout);
 
             currentGame = Game;
-        }
-
-        private void btnLaunchProgram_Click(object sender, EventArgs e)
-        {
-            Button btn = (Button)sender;
-            Process process = new Process();
-            process.StartInfo = new ProcessStartInfo(currentGame.InstallPath + Path.DirectorySeparatorChar + btn.Tag);
-            process.Start();
         }
 
         private void MessageBoxError(string Message)
@@ -360,40 +403,6 @@ namespace PlayFOnline
             settings.InstalledGame(Game.Id, Game.InstallPath);
             SettingsManager.SaveSettings(settings);
             return true;
-        }
-
-
-        private void btnInstall_Click(object sender, EventArgs e)
-        {
-            FOGameInfo Game = (FOGameInfo) lstGames.SelectedObject;
-            if (Game == null)
-                MessageBox.Show("No game selected!");
-            else
-                AddGame(Game);
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            UpdateGameList();
-        }
-
-        private void lstGames_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
-        {
-            FOGameInfo Game = (FOGameInfo)e.Model;
-            if (String.IsNullOrEmpty(Game.InstallPath))
-            {
-                e.Item.ForeColor = Color.Gray;
-            }
-        }
-
-        private void btnAbout_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
-        {
-            Process.Start("http://fodev.net");
         }
     }
 }
