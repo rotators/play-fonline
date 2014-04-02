@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PlayFOnline
 {
@@ -12,21 +12,61 @@ namespace PlayFOnline
         // Delegate we use to call methods when enumerating child windows.
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
 
-        [DllImport("user32")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
-
-        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
-
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
 
+        // Wraps everything together. Will accept a window title and return all text in the window that matches that window title.
+        public static string GetAllTextFromWindowByTitle(string windowTitle)
+        {
+            var sb = new StringBuilder();
+            // Find the main window's handle by the title.
+            var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
+
+            // Loop though the child windows, and execute the EnumChildWindowsCallback method
+            var childWindows = GetChildWindows(windowHWnd);
+
+            // For each child handle, run GetText
+            foreach (var childWindowText in childWindows.Select(GetText))
+            {
+                // Append the text to the string builder.
+                sb.Append(childWindowText);
+            }
+
+            // Return the windows full text.
+            return sb.ToString();
+        }
+
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, Int32 wParam, Int32 lParam);
+
+        public static bool WindowContainsTextString(IntPtr handle, string text)
+        {
+            var childWindows = GetChildWindows(handle);
+            foreach (var childWindowText in childWindows.Select(GetText))
+            {
+                if (childWindowText.Contains(text))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool WindowContainsTextString(string windowTitle, string text)
+        {
+            var sb = new StringBuilder();
+            var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
+            var childWindows = GetChildWindows(windowHWnd);
+            foreach (var childWindowText in childWindows.Select(GetText))
+            {
+                if (childWindowText.Contains(text))
+                    return true;
+            }
+
+            return false;
+        }
+
+        [DllImport("user32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
 
         // Callback method used to collect a list of child windows we need to capture text from.
         private static bool EnumChildWindowsCallback(IntPtr handle, IntPtr pointer)
@@ -48,10 +88,8 @@ namespace PlayFOnline
             return true;
         }
 
-        /*public static IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle)
-        {
-            FindWindowEx(parentHandle, childAfter, className, windowTitle);
-        }*/
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
         // Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
         private static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
@@ -64,7 +102,7 @@ namespace PlayFOnline
 
             try
             {
-                // Enumerates though all the child windows of the parent represented by IntPtr parent, executing EnumChildWindowsCallback for each. 
+                // Enumerates though all the child windows of the parent represented by IntPtr parent, executing EnumChildWindowsCallback for each.
                 EnumChildWindows(parent, EnumChildWindowsCallback, GCHandle.ToIntPtr(listHandle));
             }
             finally
@@ -97,51 +135,7 @@ namespace PlayFOnline
             return sb.ToString();
         }
 
-
-        public static bool WindowContainsTextString(IntPtr handle, string text)
-        {
-            var childWindows = GetChildWindows(handle);
-            foreach (var childWindowText in childWindows.Select(GetText))
-            {
-                if (childWindowText.Contains(text))
-                    return true;
-            }
-            return false;
-        }
-
-        public static bool WindowContainsTextString(string windowTitle, string text)
-        {
-            var sb = new StringBuilder();
-            var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
-            var childWindows = GetChildWindows(windowHWnd);
-            foreach (var childWindowText in childWindows.Select(GetText))
-            {
-                if (childWindowText.Contains(text))
-                    return true;
-            }
-
-            return false;
-        }
-
-        // Wraps everything together. Will accept a window title and return all text in the window that matches that window title.
-        public static string GetAllTextFromWindowByTitle(string windowTitle)
-        {
-            var sb = new StringBuilder();
-            // Find the main window's handle by the title.
-            var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
-
-            // Loop though the child windows, and execute the EnumChildWindowsCallback method
-            var childWindows = GetChildWindows(windowHWnd);
-
-            // For each child handle, run GetText
-            foreach (var childWindowText in childWindows.Select(GetText))
-            {
-                // Append the text to the string builder.
-                sb.Append(childWindowText);
-            }
-
-            // Return the windows full text.
-            return sb.ToString();
-        }
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
     }
 }

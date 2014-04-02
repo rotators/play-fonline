@@ -1,28 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace PlayFOnline
 {
-    class FOServerQuery
+    internal class FOServerQuery
     {
-        private List<FOGameInfo> Servers;
-
         private string configURL;
+        private Logger logger = LogManager.GetLogger("FOServerQuery");
+        private List<FOGameInfo> Servers;
         private string statusURL;
-
-        Logger logger = LogManager.GetLogger("FOServerQuery");
 
         public FOServerQuery(string configURL, string statusURL)
         {
             this.configURL = configURL;
             this.statusURL = statusURL;
             update();
+        }
+
+        public List<FOGameInfo> GetOnlineServers()
+        {
+            return this.Servers.Where(x => x.Status != null && x.Status.Players != -1).ToList();
+        }
+
+        public List<FOGameInfo> GetServers(bool onlyOpen = true)
+        {
+            if (onlyOpen) return this.Servers.Where(x => !x.Closed && !x.Singleplayer).ToList();
+            return this.Servers;
         }
 
         public void update()
@@ -42,8 +49,6 @@ namespace PlayFOnline
 
                 if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {
-                    
-
                     server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
                     if (server.Status.IsOffline())
                     {
@@ -61,19 +66,6 @@ namespace PlayFOnline
 
                 this.Servers.Add(server);
             }
-        }
-
-        
-
-        public List<FOGameInfo> GetOnlineServers()
-        {
-            return this.Servers.Where(x => x.Status != null && x.Status.Players != -1).ToList();
-        }
-            
-        public List<FOGameInfo> GetServers(bool onlyOpen = true)
-        {
-            if (onlyOpen) return this.Servers.Where(x => !x.Closed && !x.Singleplayer).ToList();
-            return this.Servers;
         }
     }
 }

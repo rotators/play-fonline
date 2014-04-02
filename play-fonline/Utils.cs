@@ -1,32 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace PlayFOnline
 {
     public static class Utils
     {
-        public static string GetFilenameFromUrl(string Url)
-        {
-            Uri uri = new Uri(Url);
-            return uri.Segments[uri.Segments.Length - 1];
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
         public static Int32 GetCurrentUnixTime()
         {
             Int32 unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             return unixTimestamp;
+        }
+
+        public static string GetFilenameFromUrl(string Url)
+        {
+            Uri uri = new Uri(Url);
+            return uri.Segments[uri.Segments.Length - 1];
         }
 
         public static string GetReadableTime(int seconds)
@@ -54,6 +44,14 @@ namespace PlayFOnline
                     return formatted.ToString();
                 }
             }
+        }
+
+        public static DateTime GetUnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
     }
 }

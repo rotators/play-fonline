@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace PlayFOnline
@@ -9,16 +7,11 @@ namespace PlayFOnline
     public class InstallHandler
     {
         private Dictionary<String, FOGameInstallInfo> InstallInfo;
-        NLog.Logger logger = NLog.LogManager.GetLogger("InstallHandler");
+        private NLog.Logger logger = NLog.LogManager.GetLogger("InstallHandler");
 
         public InstallHandler(Dictionary<String, FOGameInstallInfo> InstallInfo)
         {
             this.InstallInfo = InstallInfo;
-        }
-
-        public List<FOGameLaunchProgram> GetLaunchPrograms(string gameId)
-        {
-            return InstallInfo[gameId].LaunchPrograms;
         }
 
         public List<FOGameDependency> GetDependencies(string gameId)
@@ -29,6 +22,11 @@ namespace PlayFOnline
         public FOScriptInfo GetInstallScriptInfo(string gameId)
         {
             return InstallInfo[gameId].InstallScript;
+        }
+
+        public List<FOGameLaunchProgram> GetLaunchPrograms(string gameId)
+        {
+            return InstallInfo[gameId].LaunchPrograms;
         }
 
         public bool HasInstallInfo(string gameId)

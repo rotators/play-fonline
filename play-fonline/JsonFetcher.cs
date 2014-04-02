@@ -1,39 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
+﻿using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace PlayFOnline
 {
-    class JsonFetcher
+    internal class JsonFetcher
     {
-        private WebException exWeb;
         private JsonReaderException exJson;
-
-        Logger logger = LogManager.GetLogger("JsonFetcher");
+        private WebException exWeb;
+        private Logger logger = LogManager.GetLogger("JsonFetcher");
 
         public JObject downloadJson(string URL)
         {
             string jsonContent = this.fetchJson(URL);
             return parseJson(jsonContent);
-        }
-
-        private JObject parseJson(string json)
-        {
-            try
-            {
-                return JObject.Parse(json);
-            }
-            catch (JsonReaderException e)
-            {
-                logger.Error("Failed to parse {0}: {1}", json, e.Message);
-                exJson = e;
-            }
-            return null;
         }
 
         private string fetchJson(string URL)
@@ -55,6 +36,20 @@ namespace PlayFOnline
                 }
             }
             return jsonContent;
+        }
+
+        private JObject parseJson(string json)
+        {
+            try
+            {
+                return JObject.Parse(json);
+            }
+            catch (JsonReaderException e)
+            {
+                logger.Error("Failed to parse {0}: {1}", json, e.Message);
+                exJson = e;
+            }
+            return null;
         }
     }
 }

@@ -16,20 +16,44 @@ namespace PlayFOnline
 {
     public partial class frmMain : Form
     {
-        private FOSettings settings;
-        private FOServerQuery query;
-        private InstallHandler installHandler;
-        private LogoManager logoManager;
         private FOGameInfo currentGame;
-
+        private InstallHandler installHandler;
         private Logger logger = LogManager.GetLogger("UI::Main");
-
+        private LogoManager logoManager;
+        private FOServerQuery query;
+        private FOSettings settings;
         #region frmMain handlers
 
         public frmMain()
         {
             InitializeComponent();
             LoadStuff();
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void btnInstall_Click(object sender, EventArgs e)
+        {
+            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
+            if (Game == null)
+                MessageBox.Show("No game selected!");
+            else
+                AddGame(Game);
+        }
+
+        private void btnLaunchProgram_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            Process process = new Process();
+            process.StartInfo = new ProcessStartInfo(currentGame.InstallPath + Path.DirectorySeparatorChar + btn.Tag);
+            process.Start();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            UpdateGameList();
         }
 
         private void chkShowOffline_CheckedChanged(object sender, EventArgs e)
@@ -42,33 +66,9 @@ namespace PlayFOnline
             Exit();
         }
 
-        private void lstGames_SelectedIndexChanged(object sender, EventArgs e)
+        private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
         {
-            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
-            if (Game == null) return;
-            SelectGame(Game);
-        }
-
-        private void btnLaunchProgram_Click(object sender, EventArgs e)
-        {
-            Button btn = (Button)sender;
-            Process process = new Process();
-            process.StartInfo = new ProcessStartInfo(currentGame.InstallPath + Path.DirectorySeparatorChar + btn.Tag);
-            process.Start();
-        }
-
-        private void btnInstall_Click(object sender, EventArgs e)
-        {
-            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
-            if (Game == null)
-                MessageBox.Show("No game selected!");
-            else
-                AddGame(Game);
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            UpdateGameList();
+            Process.Start("http://fodev.net");
         }
 
         private void lstGames_FormatRow(object sender, BrightIdeasSoftware.FormatRowEventArgs e)
@@ -80,67 +80,69 @@ namespace PlayFOnline
             }
         }
 
-        private void btnAbout_Click(object sender, EventArgs e)
+        private void lstGames_SelectedIndexChanged(object sender, EventArgs e)
         {
+            FOGameInfo Game = (FOGameInfo)lstGames.SelectedObject;
+            if (Game == null) return;
+            SelectGame(Game);
         }
-
-        private void linkFoDev_MouseClick(object sender, MouseEventArgs e)
-        {
-            Process.Start("http://fodev.net");
-        }
-
         #endregion frmMain handlers
 
-        private void setTitle(int players = -1, int servers = -1)
+        private bool AddGame(FOGameInfo Game)
         {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var assemblyName = assembly.GetName();
-            this.Text = string.Format("Play FOnline {0}.{1}.{2}", assemblyName.Version.Major, assemblyName.Version.Minor, assemblyName.Version.Build);
-            if (players != -1)
+            if (!installHandler.HasInstallInfo(Game.Id))
             {
-                this.Text += " - " + players + " players online on " + servers + " servers";
+                MessageBoxError("No install info available for " + Game.Name + " :(" + Environment.NewLine + "Please report this, so that it can be implemented.");
+                return false;
             }
+
+            DialogResult Result = MessageBox.Show("Is " + Game.Name + " already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly. This assumes that the game is working in its current state.", Game.Name + " already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (Result == System.Windows.Forms.DialogResult.Yes)
+            {
+                FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
+                FolderBrowser.ShowNewFolderButton = false;
+                if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                    return false;
+
+                if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
+                {
+                    MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
+                    return false;
+                }
+
+                Game.InstallPath = FolderBrowser.SelectedPath;
+
+                string msg = "Successfully addded " + Game.Name + "!";
+                MessageBox.Show(msg);
+                logger.Info(msg);
+            }
+            else if (Result == System.Windows.Forms.DialogResult.No)
+            {
+                frmInstallMain installMain = new frmInstallMain(Game, installHandler, logoManager, settings.Paths.scripts);
+                installMain.ShowDialog();
+
+                if (!installMain.IsSuccess)
+                    return false;
+
+                string msg = "Successfully installed " + Game.Name + "!";
+                MessageBox.Show(msg);
+                logger.Info(msg);
+            }
+            else
+                return false;
+
+            settings.InstalledGame(Game.Id, Game.InstallPath);
+            SettingsManager.SaveSettings(settings);
+            return true;
         }
 
-        private void LoadStuff()
+        private bool DownloadInstallScript(string url, string localPath)
         {
-            settings = SettingsManager.LoadSettings();
-            logger.Info("Loading config {0}", SettingsManager.path);
-
-            WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
-
-            setTitle();
-
-            if (settings.UI == null)
-            {
-                this.DesktopLocation = new Point(settings.UI.x, settings.UI.y);
-                this.Width = settings.UI.width;
-                this.Height = settings.UI.height;
-            }
-
-            if (settings.Paths == null)
-            {
-                string baseDir = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
-                settings.Paths = new PathSettings();
-                settings.Paths.scripts = baseDir + Path.DirectorySeparatorChar + "scripts";
-                settings.Paths.downloadTemp = baseDir + Path.DirectorySeparatorChar + "temp";
-            }
-
-            UpdateGameList();
-
-            JsonFetcher jsonFetch = new JsonFetcher();
-            JObject o = jsonFetch.downloadJson(settings.installURL);
-            installHandler = new InstallHandler(JsonConvert.DeserializeObject<Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
-
-            logoManager = new LogoManager("./logos", "http://fodev.net/status/json/logo/");
-
-            this.olvInstallPath.AspectToStringConverter = delegate(object x)
-            {
-                string Path = (string)x;
-                if (String.IsNullOrWhiteSpace(Path))
-                    return "Not installed/added";
-                return Path;
-            };
+            WebClient webClient = new WebClient();
+            webClient.Proxy = null;
+            webClient.DownloadFile(url, localPath);
+            return true;
         }
 
         private void Exit()
@@ -153,92 +155,6 @@ namespace PlayFOnline
 
             SettingsManager.SaveSettings(settings);
             Environment.Exit(0);
-        }
-
-        private void UpdateStatusBar(string text)
-        {
-            statusBarLabel.Text = DateTime.Now + " | " + text;
-            logger.Info(text);
-        }
-
-        private void UpdateGameList()
-        {
-            UpdateStatusBar("Updating gamelist...");
-            try
-            {
-                query = new FOServerQuery(settings.configURL, settings.statusURL);
-                List<FOGameInfo> servers;
-
-                if (chkShowOffline.Checked)
-                    servers = query.GetServers(true);
-                else
-                    servers = query.GetServers(true).Where(x => !x.Status.IsOffline() || settings.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
-
-                servers.Where(x => settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = settings.GetInstallPath(x.Id));
-
-                var online = servers.Where(x => !x.Status.IsOffline());
-                setTitle(online.Sum(x => x.Status.Players), online.Count());
-
-                lstGames.SetObjects(servers);
-                lstGames.Refresh();
-                UpdateStatusBar("Updated gamelist.");
-
-                return;
-            }
-            catch (WebException e)
-            {
-                MessageBox.Show(String.Format("Unable to download {0}: {1}", e.Response.ResponseUri, e.Message));
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message + Environment.NewLine + "Please see log.txt for more information.");
-            }
-            UpdateStatusBar("Failed to update gamelist.");
-        }
-
-        private void SelectGame(FOGameInfo Game)
-        {
-            bool installed = !String.IsNullOrWhiteSpace(Game.InstallPath);
-
-            btnInstall.Enabled = !installed;
-            btnOptions.Enabled = installed;
-
-            var controls = flowMenu.Controls;
-
-            flowMenu.Controls.Clear();
-            flowMenu.Update();
-            if (installed)
-            {
-                foreach (FOGameLaunchProgram program in installHandler.GetLaunchPrograms(Game.Id))
-                {
-                    Button btnCustom = new Button();
-                    btnCustom.Text = program.Name;
-                    btnCustom.Width = btnInstall.Width;
-                    btnCustom.Height = btnInstall.Height;
-                    btnCustom.Tag = program.File;
-                    btnCustom.Click += btnLaunchProgram_Click;
-                    flowMenu.Controls.Add(btnCustom);
-                }
-            }
-            else
-                flowMenu.Controls.Add(btnInstall);
-            flowMenu.Controls.Add(btnAbout);
-
-            currentGame = Game;
-        }
-
-        private void MessageBoxError(string Message)
-        {
-            MessageBox.Show(Message);
-            logger.Error(Message);
-        }
-
-        private bool DownloadInstallScript(string url, string localPath)
-        {
-            WebClient webClient = new WebClient();
-            webClient.Proxy = null;
-            webClient.DownloadFile(url, localPath);
-            return true;
         }
 
         private bool InstallGame(FOGameInfo Game)
@@ -350,53 +266,133 @@ namespace PlayFOnline
             return true;
         }
 
-        private bool AddGame(FOGameInfo Game)
+        private void LoadStuff()
         {
-            if (!installHandler.HasInstallInfo(Game.Id))
+            settings = SettingsManager.LoadSettings();
+            logger.Info("Loading config {0}", SettingsManager.path);
+
+            WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
+
+            SetTitle();
+
+            if (settings.UI == null)
             {
-                MessageBoxError("No install info available for " + Game.Name + " :(" + Environment.NewLine + "Please report this, so that it can be implemented.");
-                return false;
+                this.DesktopLocation = new Point(settings.UI.x, settings.UI.y);
+                this.Width = settings.UI.width;
+                this.Height = settings.UI.height;
             }
 
-            DialogResult Result = MessageBox.Show("Is " + Game.Name + " already installed on your computer?" + Environment.NewLine + "If this is the case, the installed directory can be added directly. This assumes that the game is working in its current state.", Game.Name + " already installed?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (Result == System.Windows.Forms.DialogResult.Yes)
+            if (settings.Paths == null)
             {
-                FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
-                FolderBrowser.ShowNewFolderButton = false;
-                if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                    return false;
+                string baseDir = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
+                settings.Paths = new PathSettings();
+                settings.Paths.scripts = baseDir + Path.DirectorySeparatorChar + "scripts";
+                settings.Paths.downloadTemp = baseDir + Path.DirectorySeparatorChar + "temp";
+            }
 
-                if (!installHandler.VerifyGameFolderPath(Game.Id, FolderBrowser.SelectedPath))
+            UpdateGameList();
+
+            JsonFetcher jsonFetch = new JsonFetcher();
+            JObject o = jsonFetch.downloadJson(settings.installURL);
+            installHandler = new InstallHandler(JsonConvert.DeserializeObject<Dictionary<String, FOGameInstallInfo>>(o["fonline"]["install-data"].ToString()));
+
+            logoManager = new LogoManager("./logos", "http://fodev.net/status/json/logo/");
+
+            this.olvInstallPath.AspectToStringConverter = delegate(object x)
+            {
+                string Path = (string)x;
+                if (String.IsNullOrWhiteSpace(Path))
+                    return "Not installed/added";
+                return Path;
+            };
+        }
+
+        private void MessageBoxError(string Message)
+        {
+            MessageBox.Show(Message);
+            logger.Error(Message);
+        }
+
+        private void SelectGame(FOGameInfo Game)
+        {
+            bool installed = !String.IsNullOrWhiteSpace(Game.InstallPath);
+
+            btnInstall.Enabled = !installed;
+            btnOptions.Enabled = installed;
+
+            var controls = flowMenu.Controls;
+
+            flowMenu.Controls.Clear();
+            flowMenu.Update();
+            if (installed)
+            {
+                foreach (FOGameLaunchProgram program in installHandler.GetLaunchPrograms(Game.Id))
                 {
-                    MessageBox.Show(FolderBrowser.SelectedPath + " does not contain a valid " + Game.Name + " installation.");
-                    return false;
+                    Button btnCustom = new Button();
+                    btnCustom.Text = program.Name;
+                    btnCustom.Width = btnInstall.Width;
+                    btnCustom.Height = btnInstall.Height;
+                    btnCustom.Tag = program.File;
+                    btnCustom.Click += btnLaunchProgram_Click;
+                    flowMenu.Controls.Add(btnCustom);
                 }
-
-                Game.InstallPath = FolderBrowser.SelectedPath;
-
-                string msg = "Successfully addded " + Game.Name + "!";
-                MessageBox.Show(msg);
-                logger.Info(msg);
-            }
-            else if (Result == System.Windows.Forms.DialogResult.No)
-            {
-                frmInstallMain installMain = new frmInstallMain(Game, installHandler, logoManager, settings.Paths.scripts);
-                installMain.ShowDialog();
-
-                if (!installMain.IsSuccess)
-                    return false;
-
-                string msg = "Successfully installed " + Game.Name + "!";
-                MessageBox.Show(msg);
-                logger.Info(msg);
             }
             else
-                return false;
+                flowMenu.Controls.Add(btnInstall);
+            flowMenu.Controls.Add(btnAbout);
 
-            settings.InstalledGame(Game.Id, Game.InstallPath);
-            SettingsManager.SaveSettings(settings);
-            return true;
+            currentGame = Game;
+        }
+
+        private void SetTitle(int players = -1, int servers = -1)
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assemblyName = assembly.GetName();
+            this.Text = string.Format("Play FOnline {0}.{1}.{2}", assemblyName.Version.Major, assemblyName.Version.Minor, assemblyName.Version.Build);
+            if (players != -1)
+            {
+                this.Text += " - " + players + " players online on " + servers + " servers";
+            }
+        }
+        private void UpdateGameList()
+        {
+            UpdateStatusBar("Updating gamelist...");
+            try
+            {
+                query = new FOServerQuery(settings.configURL, settings.statusURL);
+                List<FOGameInfo> servers;
+
+                if (chkShowOffline.Checked)
+                    servers = query.GetServers(true);
+                else
+                    servers = query.GetServers(true).Where(x => !x.Status.IsOffline() || settings.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
+
+                servers.Where(x => settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = settings.GetInstallPath(x.Id));
+
+                var online = servers.Where(x => !x.Status.IsOffline());
+                SetTitle(online.Sum(x => x.Status.Players), online.Count());
+
+                lstGames.SetObjects(servers);
+                lstGames.Refresh();
+                UpdateStatusBar("Updated gamelist.");
+
+                return;
+            }
+            catch (WebException e)
+            {
+                MessageBox.Show(String.Format("Unable to download {0}: {1}", e.Response.ResponseUri, e.Message));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message + Environment.NewLine + "Please see log.txt for more information.");
+            }
+            UpdateStatusBar("Failed to update gamelist.");
+        }
+
+        private void UpdateStatusBar(string text)
+        {
+            statusBarLabel.Text = DateTime.Now + " | " + text;
+            logger.Info(text);
         }
     }
 }
