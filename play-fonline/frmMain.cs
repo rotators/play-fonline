@@ -115,7 +115,8 @@ namespace PlayFOnline
 
                 servers.Where(x => settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = settings.GetInstallPath(x.Id));
 
-                setTitle(servers.Sum(x => x.Status.Players), servers.Count(x => !x.Status.IsOffline()));
+                var online = servers.Where(x => !x.Status.IsOffline());
+                setTitle(online.Sum(x => x.Status.Players), online.Count());
 
                 lstGames.SetObjects(servers);
                 lstGames.Refresh();
