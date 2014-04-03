@@ -21,13 +21,16 @@
         public FOGameStatus Status { get; set; }
         public string Website      { get; set; }
 
-        public void Ping()
+        public void Ping(Action completedAction)
         {
-            AutoResetEvent resetEvent = new AutoResetEvent(true);
-
             Ping ping = new Ping();
+            PingOptions pingOptions = new PingOptions();
+
+            string data = "rotate";
+            byte[] buffer = Encoding.ASCII.GetBytes(data);
+
             ping.PingCompleted += new PingCompletedEventHandler(ping_PingCompleted);
-            ping.SendAsync(this.Host, null);
+            ping.SendAsync(this.Host, 500, buffer, pingOptions, completedAction);
         }
 
         void ping_PingCompleted(object sender, PingCompletedEventArgs e)
@@ -36,6 +39,7 @@
             if (reply.Status == IPStatus.Success)
             {
                 this.Status.Latency = (int)reply.RoundtripTime;
+                ((Action)e.UserState).Invoke();
             }
         }
     }
@@ -58,6 +62,8 @@
 
     public class FOGameStatus
     {
+        public FOGameStatus()    { this.Latency = int.MaxValue; }
+
         public int Players       { get; set; }
         public string PlayersStr { get; set; }
         public int Seen          { get; set; }

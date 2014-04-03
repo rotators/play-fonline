@@ -64,6 +64,7 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.linkFoDev = new System.Windows.Forms.LinkLabel();
             this.frmMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.olvPing = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
             this.statusBar.SuspendLayout();
@@ -118,6 +119,7 @@
             this.lstGames.AllColumns.Add(this.olvColumn2);
             this.lstGames.AllColumns.Add(this.olvColumn3);
             this.lstGames.AllColumns.Add(this.olvColumn4);
+            this.lstGames.AllColumns.Add(this.olvPing);
             this.lstGames.AllColumns.Add(this.olvInstallPath);
             this.lstGames.AllColumns.Add(this.olvColumn5);
             this.lstGames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -129,6 +131,7 @@
             this.olvColumn2,
             this.olvColumn3,
             this.olvColumn4,
+            this.olvPing,
             this.olvInstallPath,
             this.olvColumn5});
             this.lstGames.Cursor = System.Windows.Forms.Cursors.Default;
@@ -176,13 +179,11 @@
             // olvInstallPath
             // 
             this.olvInstallPath.AspectName = "InstallPath";
-            this.olvInstallPath.DisplayIndex = 6;
             this.olvInstallPath.Text = "Install Path";
             // 
             // olvColumn5
             // 
             this.olvColumn5.AspectName = "Source";
-            this.olvColumn5.DisplayIndex = 5;
             this.olvColumn5.Hyperlink = true;
             this.olvColumn5.Text = "Source Code";
             // 
@@ -227,6 +228,11 @@
             // 
             this.frmMainBindingSource.DataSource = typeof(PlayFOnline.frmMain);
             // 
+            // olvPing
+            // 
+            this.olvPing.AspectName = "Status.Latency";
+            this.olvPing.Text = "Ping";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -253,6 +259,8 @@
         }
 
         #endregion
+
+        private BrightIdeasSoftware.OLVColumn olvPing;
 
     }
 }

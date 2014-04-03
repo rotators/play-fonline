@@ -21,8 +21,9 @@
         private InstallHandler installHandler;
         private Logger logger = LogManager.GetLogger("UI::Main");
         private LogoManager logoManager;
-        private FOServerQuery query;
         private FOSettings settings;
+
+        delegate void UpdateDelegate();
 
         #region frmMain handlers
 
@@ -270,6 +271,8 @@
 
         private void LoadStuff()
         {
+
+
             this.settings = SettingsManager.LoadSettings();
             this.logger.Info("Loading config {0}", SettingsManager.SettingsPath);
 
@@ -303,10 +306,40 @@
             this.olvInstallPath.AspectToStringConverter = delegate(object x)
             {
                 string path = (string)x;
+                MessageBox.Show(path);
                 if (string.IsNullOrWhiteSpace(path))
                     return "Not installed/added";
                 return path;
             };
+
+            this.olvPing.AspectToStringConverter = delegate(object x)
+            {
+                int latency = (int)x;
+                if (latency != int.MaxValue)
+                    return string.Format("{0} ms", latency);
+                return string.Empty;
+            };
+
+            // Causes BSOD - https://connect.microsoft.com/VisualStudio/feedback/details/721557/bluescreen-process-has-locked-pages-netframework-ping-send
+            /*Thread pingThread = new System.Threading.Thread(delegate()
+            {
+                while (true)
+                {
+                    this.Invoke((MethodInvoker)delegate { this.PingServers(); });
+                    Thread.Sleep(5000);
+                }
+            });
+            pingThread.Start();*/
+        }
+
+        private void PingServers()
+        {
+            var servers = this.GetServers();
+            Action refreshDisplay = delegate()
+            {
+                this.RefreshServerList(servers);
+            };
+            servers.Where(x => !x.Status.IsOffline()).ToList().ForEach(x => x.Ping(refreshDisplay));
         }
 
         private void MessageBoxError(string message)
@@ -356,26 +389,39 @@
                 this.Text += string.Format(" - {0} players online on {1} servers", players, servers);
             }
         }
+
+        private List<FOGameInfo> GetServers()
+        {
+            List<FOGameInfo> servers;
+
+            FOServerQuery query = new FOServerQuery(this.settings.ConfigUrl, this.settings.StatusUrl);
+            servers = query.GetServers(true);
+
+            if (!this.chkShowOffline.Checked)
+                servers = servers.Where(x => !x.Status.IsOffline() || this.settings.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
+            return servers;
+        }
+
+        private void RefreshServerList(List<FOGameInfo> servers)
+        {
+            lstGames.SetObjects(servers);
+            lstGames.Refresh();
+        }
+
         private void UpdateGameList()
         {
             this.UpdateStatusBar("Updating gamelist...");
             try
             {
-                this.query = new FOServerQuery(this.settings.ConfigUrl, this.settings.StatusUrl);
-                List<FOGameInfo> servers;
-
-                servers = this.query.GetServers(true);
-
-                if (!this.chkShowOffline.Checked)
-                    servers = servers.Where(x => !x.Status.IsOffline() || this.settings.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
-
+                var servers = this.GetServers();
                 servers.Where(x => this.settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = this.settings.GetInstallPath(x.Id));
 
                 var online = servers.Where(x => !x.Status.IsOffline());
                 this.SetTitle(online.Sum(x => x.Status.Players), online.Count());
 
-                lstGames.SetObjects(servers);
-                lstGames.Refresh();
+                this.PingServers();
+
+                this.RefreshServerList(servers);
                 this.UpdateStatusBar("Updated gamelist.");
 
                 return;
