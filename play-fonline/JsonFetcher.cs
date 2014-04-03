@@ -1,44 +1,44 @@
-﻿using System.Net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System.Net;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using NLog;
+
     internal class JsonFetcher
     {
-        private JsonReaderException exJson;
-        private WebException exWeb;
+        private JsonReaderException jsonException;
+        private WebException webException;
         private Logger logger = LogManager.GetLogger("JsonFetcher");
 
-        public JObject downloadJson(string URL)
+        public JObject DownloadJson(string url)
         {
-            string jsonContent = this.fetchJson(URL);
-            return parseJson(jsonContent);
+            string jsonContent = this.FetchJson(url);
+            return this.ParseJson(jsonContent);
         }
 
-        private string fetchJson(string URL)
+        private string FetchJson(string url)
         {
             string jsonContent;
             using (var webClient = new System.Net.WebClient())
             {
                 webClient.Proxy = null;
-                logger.Info("Downloading JSON from {0}", URL);
+                this.logger.Info("Downloading JSON from {0}", url);
                 try
                 {
-                    jsonContent = webClient.DownloadString(URL);
+                    jsonContent = webClient.DownloadString(url);
                 }
                 catch (WebException e)
                 {
-                    logger.Error("Failed to download {0}: {1}", URL, e.Message);
-                    exWeb = e;
-                    return "";
+                    this.logger.Error("Failed to download {0}: {1}", url, e.Message);
+                    this.webException = e;
+                    return string.Empty;
                 }
             }
             return jsonContent;
         }
 
-        private JObject parseJson(string json)
+        private JObject ParseJson(string json)
         {
             try
             {
@@ -46,8 +46,8 @@ namespace PlayFOnline
             }
             catch (JsonReaderException e)
             {
-                logger.Error("Failed to parse {0}: {1}", json, e.Message);
-                exJson = e;
+                this.logger.Error("Failed to parse {0}: {1}", json, e.Message);
+                this.jsonException = e;
             }
             return null;
         }

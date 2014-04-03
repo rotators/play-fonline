@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
-    // https://stackoverflow.com/questions/17615105/getting-text-entered-in-textbox-of-other-applications-using-c-sharp
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Text;
+
+    /// <summary>
+    /// Some code from https://stackoverflow.com/questions/17615105/getting-text-entered-in-textbox-of-other-applications-using-c-sharp
+    /// </summary>
     public static class Win32
     {
         // Delegate we use to call methods when enumerating child windows.
@@ -19,6 +21,7 @@ namespace PlayFOnline
         public static string GetAllTextFromWindowByTitle(string windowTitle)
         {
             var sb = new StringBuilder();
+
             // Find the main window's handle by the title.
             var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
 
@@ -37,7 +40,7 @@ namespace PlayFOnline
         }
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, Int32 wParam, Int32 lParam);
+        public static extern IntPtr SendMessage(IntPtr windowHandle, uint msg, int wParam, int lParam);
 
         public static bool WindowContainsTextString(IntPtr handle, string text)
         {
@@ -69,7 +72,7 @@ namespace PlayFOnline
         private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
 
         // Callback method used to collect a list of child windows we need to capture text from.
-        private static bool EnumChildWindowsCallback(IntPtr handle, IntPtr pointer)
+        private static bool EnumChildWindowsCallback(IntPtr windowHandle, IntPtr pointer)
         {
             // Creates a managed GCHandle object from the pointer representing a handle to the list created in GetChildWindows.
             var gcHandle = GCHandle.FromIntPtr(pointer);
@@ -83,7 +86,7 @@ namespace PlayFOnline
             }
 
             // Adds the handle to the list.
-            list.Add(handle);
+            list.Add(windowHandle);
 
             return true;
         }

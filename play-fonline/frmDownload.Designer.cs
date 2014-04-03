@@ -1,23 +1,30 @@
 ﻿namespace PlayFOnline
 {
-    partial class frmDownload
+    public partial class frmDownload
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.GroupBox groupMain;
+        private System.Windows.Forms.ProgressBar progressFile;
+        private System.Windows.Forms.Label labelDetailed;
+        private System.Windows.Forms.Panel panelButtons;
+        private System.Windows.Forms.Label labelDownloading;
+        private System.Windows.Forms.Button buttonCancel;
 
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
         {
-            if( disposing && (components != null) )
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
-            base.Dispose( disposing );
+            base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
@@ -133,12 +140,5 @@
 
         #endregion
 
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
-        private System.Windows.Forms.GroupBox groupMain;
-        private System.Windows.Forms.ProgressBar progressFile;
-        private System.Windows.Forms.Label labelDetailed;
-        private System.Windows.Forms.Panel panelButtons;
-        private System.Windows.Forms.Label labelDownloading;
-        private System.Windows.Forms.Button buttonCancel;
     }
 }

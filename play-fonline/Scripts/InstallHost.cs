@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CSScriptLibrary;
-
-namespace PlayFOnline.Scripts
+﻿namespace PlayFOnline.Scripts
 {
-    public interface IInstallHost { }
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using CSScriptLibrary;
+
     public interface IInstallScript
     {
         bool Install(string game, string tempDir, string installDir);
     }
 
-    class InstallHost : IInstallHost
+    public class InstallHost
     {
         public bool RunInstallScript(string scriptFile, string game, string tempDir, string installDir)
         {

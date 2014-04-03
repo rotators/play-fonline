@@ -1,11 +1,29 @@
 ﻿namespace PlayFOnline
 {
-    partial class frmMain
+    public partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        private System.Windows.Forms.FlowLayoutPanel flowMenu;
+        private System.Windows.Forms.Button btnOptions;
+        private System.Windows.Forms.Button btnInstall;
+        private System.Windows.Forms.CheckBox chkShowOffline;
+        private BrightIdeasSoftware.ObjectListView lstGames;
+        private BrightIdeasSoftware.OLVColumn olvName;
+        private BrightIdeasSoftware.OLVColumn olvPlayers;
+        private BrightIdeasSoftware.OLVColumn olvColumn2;
+        private BrightIdeasSoftware.OLVColumn olvColumn3;
+        private BrightIdeasSoftware.OLVColumn olvColumn4;
+        private BrightIdeasSoftware.OLVColumn olvColumn5;
+        private BrightIdeasSoftware.OLVColumn olvInstallPath;
+        private System.Windows.Forms.StatusStrip statusBar;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
+        private System.Windows.Forms.LinkLabel linkFoDev;
+        private System.Windows.Forms.BindingSource frmMainBindingSource;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -13,9 +31,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -28,10 +46,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.flowMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.btnInstall = new System.Windows.Forms.Button();
             this.btnOptions = new System.Windows.Forms.Button();
-            this.btnAbout = new System.Windows.Forms.Button();
             this.chkShowOffline = new System.Windows.Forms.CheckBox();
             this.lstGames = new BrightIdeasSoftware.ObjectListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -45,16 +63,17 @@
             this.statusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.linkFoDev = new System.Windows.Forms.LinkLabel();
+            this.frmMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
             this.statusBar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.frmMainBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // flowMenu
             // 
             this.flowMenu.Controls.Add(this.btnInstall);
             this.flowMenu.Controls.Add(this.btnOptions);
-            this.flowMenu.Controls.Add(this.btnAbout);
             this.flowMenu.Location = new System.Drawing.Point(5, 12);
             this.flowMenu.Name = "flowMenu";
             this.flowMenu.Size = new System.Drawing.Size(119, 389);
@@ -80,17 +99,6 @@
             this.btnOptions.TabIndex = 6;
             this.btnOptions.Text = "Options";
             this.btnOptions.UseVisualStyleBackColor = true;
-            // 
-            // btnAbout
-            // 
-            this.btnAbout.Enabled = false;
-            this.btnAbout.Location = new System.Drawing.Point(3, 71);
-            this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(103, 28);
-            this.btnAbout.TabIndex = 7;
-            this.btnAbout.Text = "About";
-            this.btnAbout.UseVisualStyleBackColor = true;
-            this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
             // chkShowOffline
             // 
@@ -215,6 +223,10 @@
             this.linkFoDev.Text = "http://fodev.net";
             this.linkFoDev.MouseClick += new System.Windows.Forms.MouseEventHandler(this.linkFoDev_MouseClick);
             // 
+            // frmMainBindingSource
+            // 
+            this.frmMainBindingSource.DataSource = typeof(PlayFOnline.frmMain);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,6 +246,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).EndInit();
             this.statusBar.ResumeLayout(false);
             this.statusBar.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.frmMainBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -241,23 +254,5 @@
 
         #endregion
 
-        private System.Windows.Forms.FlowLayoutPanel flowMenu;
-        private System.Windows.Forms.Button btnAbout;
-        private System.Windows.Forms.Button btnOptions;
-        private System.Windows.Forms.Button btnInstall;
-        private System.Windows.Forms.CheckBox chkShowOffline;
-        private BrightIdeasSoftware.ObjectListView lstGames;
-        private BrightIdeasSoftware.OLVColumn olvName;
-        private BrightIdeasSoftware.OLVColumn olvPlayers;
-        private BrightIdeasSoftware.OLVColumn olvColumn2;
-        private BrightIdeasSoftware.OLVColumn olvColumn3;
-        private BrightIdeasSoftware.OLVColumn olvColumn4;
-        private BrightIdeasSoftware.OLVColumn olvColumn5;
-        private BrightIdeasSoftware.OLVColumn olvInstallPath;
-        private System.Windows.Forms.StatusStrip statusBar;
-        private System.Windows.Forms.Button btnRefresh;
-        private System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
-        private System.Windows.Forms.LinkLabel linkFoDev;
     }
 }
-

@@ -1,21 +1,21 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System;
+    using System.IO;
+    using System.Security.Cryptography;
+    using System.Text;
+
     public static class Utils
     {
-        public static Int32 GetCurrentUnixTime()
+        public static int GetCurrentUnixTime()
         {
-            Int32 unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            int unixTimestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
             return unixTimestamp;
         }
 
-        public static string GetFilenameFromUrl(string Url)
+        public static string GetFilenameFromUrl(string url)
         {
-            Uri uri = new Uri(Url);
+            Uri uri = new Uri(url);
             return uri.Segments[uri.Segments.Length - 1];
         }
 
@@ -49,9 +49,8 @@ namespace PlayFOnline
         public static DateTime GetUnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
+            System.DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            return time.AddSeconds(unixTimeStamp).ToLocalTime();
         }
     }
 }

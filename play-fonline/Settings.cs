@@ -1,54 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Newtonsoft.Json;
+    using PlayFOnline.Data;
+
     public class FOSettings
     {
-        public string configURL { get; set; }
+        public string ConfigUrl { get; set; }
 
         public List<FOGameDependency> Dependencies { get; set; }
-
         public List<InstalledGame> Games { get; set; }
 
-        public string installURL { get; set; }
-        public PathSettings Paths { get; set; }
+        public string InstallUrl { get; set; }
+        public string StatusUrl { get; set; }
 
-        public string statusURL { get; set; }
+        public PathSettings Paths { get; set; }
         public UISettings UI { get; set; }
+
         public void AddDependency(FOGameDependency depend, string Path)
         {
             FOGameDependency newDepend = depend;
             newDepend.Path = Path;
-            if (Dependencies == null) Dependencies = new List<FOGameDependency>();
-            Dependencies.Add(newDepend);
+            if (this.Dependencies == null) this.Dependencies = new List<FOGameDependency>();
+            this.Dependencies.Add(newDepend);
         }
 
-        public string GetInstallPath(string Id)
+        public string GetInstallPath(string id)
         {
-            return (Games.Find(x => x.Id == Id).Path);
+            return this.Games.Find(x => x.Id == id).Path;
         }
 
-        public bool HasDependency(string Name)
+        public bool HasDependency(string name)
         {
-            if (Dependencies == null) return false;
-            return (Dependencies.Exists(x => x.Name == Name));
+            if (this.Dependencies == null) return false;
+            return this.Dependencies.Exists(x => x.Name == name);
         }
 
-        public void InstalledGame(string Id, string Path)
+        public void InstalledGame(string id, string path)
         {
             InstalledGame game = new PlayFOnline.InstalledGame();
-            game.Id = Id;
-            game.Path = Path;
-            if (Games == null) Games = new List<PlayFOnline.InstalledGame>();
-            Games.Add(game);
+            game.Id = id;
+            game.Path = path;
+            if (this.Games == null) this.Games = new List<PlayFOnline.InstalledGame>();
+                this.Games.Add(game);
         }
-        public bool IsInstalled(string Id)
+        public bool IsInstalled(string id)
         {
-            if (Games == null) return false;
-            return (Games.Exists(x => x.Id == Id));
+            if (this.Games == null) return false;
+            return this.Games.Exists(x => x.Id == id);
         }
     }
 
@@ -60,33 +61,33 @@ namespace PlayFOnline
 
     public class PathSettings
     {
-        public string downloadTemp { get; set; }
-        public string scripts { get; set; }
+        public string DownloadTemp { get; set; }
+        public string Scripts { get; set; }
     }
 
     public class UISettings
     {
-        public int height { get; set; }
-        public bool showOffline { get; set; }
-        public int width { get; set; }
-        public int x { get; set; }
-        public int y { get; set; }
+        public int Height { get; set; }
+        public bool ShowOffline { get; set; }
+        public int Width { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 
     internal static class SettingsManager
     {
-        public static string path = Environment.CurrentDirectory + "\\settings.json";
+        public static readonly string SettingsPath = Path.Combine(Environment.CurrentDirectory, "settings.json");
 
-        static public FOSettings LoadSettings()
+        public static FOSettings LoadSettings()
         {
-            string jsonSettings = File.ReadAllText(path);
+            string jsonSettings = File.ReadAllText(SettingsPath);
             return JsonConvert.DeserializeObject<FOSettings>(jsonSettings);
         }
 
-        static public void SaveSettings(FOSettings settings)
+        public static void SaveSettings(FOSettings settings)
         {
             string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
-            File.WriteAllText(path, json);
+            File.WriteAllText(SettingsPath, json);
         }
     }
 }

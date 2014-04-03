@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
-using NLog;
-using PlayFOnline.Scripts;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Net;
+    using System.Windows.Forms;
+    using NLog;
+    using PlayFOnline.Data;
+    using PlayFOnline.Scripts;
+
     public partial class frmInstallMain : Form
     {
         private Button btnBrowsePath;
@@ -20,7 +21,7 @@ namespace PlayFOnline
         private Logger logger = LogManager.GetLogger("frmInstallMain");
         private LogoManager logoManager;
         private string scriptPath;
-        private Dictionary<SetupStep, List<Control>> SetupControls = new Dictionary<SetupStep, List<Control>>();
+        private Dictionary<SetupStep, List<Control>> setupControls = new Dictionary<SetupStep, List<Control>>();
         private TextBox txtInstallPath;
         public frmInstallMain(FOGameInfo game, InstallHandler installHandler, LogoManager logoManager, string scriptPath)
         {
@@ -28,9 +29,9 @@ namespace PlayFOnline
             this.scriptPath = scriptPath;
             this.installHandler = installHandler;
             this.logoManager = logoManager;
-            InitializeComponent();
+            this.InitializeComponent();
 
-            pctGameLogo.Image = Image.FromFile(logoManager.getLogoPath(game.Id));
+            pctGameLogo.Image = Image.FromFile(logoManager.GetLogoPath(game.Id));
         }
 
         private enum SetupStep
@@ -41,10 +42,11 @@ namespace PlayFOnline
         }
 
         public bool IsSuccess { get; set; }
+
         private void btnBack_Click(object sender, EventArgs e)
         {
-            if (currentStep == SetupStep.SelectDependencies) SetStep(SetupStep.SelectPath);
-            if (currentStep == SetupStep.Install) SetStep(SetupStep.SelectDependencies);
+            if (this.currentStep == SetupStep.SelectDependencies) this.SetStep(SetupStep.SelectPath);
+            if (this.currentStep == SetupStep.Install) this.SetStep(SetupStep.SelectDependencies);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -53,12 +55,12 @@ namespace PlayFOnline
             TextBox txt = (TextBox)btn.Tag;
             FOGameDependency depend = (FOGameDependency)txt.Tag;
 
-            OpenFileDialog OpenFile = new OpenFileDialog();
-            OpenFile.Filter = depend.Name + "|*.*";
-            if (OpenFile.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = depend.Name + "|*.*";
+            if (openFile.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
 
-            if (OpenFile.CheckFileExists)
+            if (openFile.CheckFileExists)
             {
                 if (string.IsNullOrEmpty(depend.Script.Path))
                 {
@@ -68,7 +70,7 @@ namespace PlayFOnline
                         {
                             try
                             {
-                                string fullPath = scriptPath + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl(depend.Script.Url);
+                                string fullPath = this.scriptPath + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl(depend.Script.Url);
 
                                 if (!File.Exists(fullPath))
                                 {
@@ -79,42 +81,40 @@ namespace PlayFOnline
                             }
                             catch (WebException ex)
                             {
-                                MessageBoxError("Failed to download " + depend.Script.Url + ":" + ex.Message);
+                                this.MessageBoxError("Failed to download " + depend.Script.Url + ":" + ex.Message);
                                 return;
                             }
                         }
                     }
                     else
-                        MessageBoxError("No script available for verifying dependency " + depend.Name);
+                        this.MessageBoxError("No script available for verifying dependency " + depend.Name);
                 }
 
                 ResolveHost resolveHost = new ResolveHost();
                 bool chooseNew = false;
                 do
                 {
-                    if (chooseNew) OpenFile.ShowDialog();
+                    if (chooseNew) openFile.ShowDialog();
                     chooseNew = false;
-                    if (!resolveHost.RunResolveScript(depend.Script.Path, depend.Name, OpenFile.FileName))
+                    if (!resolveHost.RunResolveScript(depend.Script.Path, depend.Name, openFile.FileName))
                     {
-                        chooseNew = (MessageBox.Show(OpenFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline",
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No);
+                        chooseNew = MessageBox.Show(openFile.FileName + " doesn't seem to be a valid file for " + depend.Name + ", do you want to use it anyway?", "Play FOnline", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No;
                     }
-                } while (chooseNew);
+                }
+                while (chooseNew);
             }
 
-            txt.Text = OpenFile.FileName;
-            //settings.AddDependency(depend, OpenFile.FileName);
+            txt.Text = openFile.FileName;
         }
 
         private void btnBrowsePath_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog FolderBrowser = new FolderBrowserDialog();
-            FolderBrowser.ShowNewFolderButton = false;
-            if (FolderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            folderBrowser.ShowNewFolderButton = false;
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
 
-            txtInstallPath.Text = FolderBrowser.SelectedPath;
-            // game.InstallPath = FolderBrowser.SelectedPath;
+            this.txtInstallPath.Text = folderBrowser.SelectedPath;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -124,14 +124,14 @@ namespace PlayFOnline
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (currentStep == SetupStep.SelectPath)
+            if (this.currentStep == SetupStep.SelectPath)
             {
-                if (installHandler.GetDependencies(game.Id) == null)
-                    SetStep(SetupStep.Install);
+                if (this.installHandler.GetDependencies(this.game.Id) == null)
+                    this.SetStep(SetupStep.Install);
                 else
-                    SetStep(SetupStep.SelectDependencies);
+                    this.SetStep(SetupStep.SelectDependencies);
             }
-            else if (currentStep == SetupStep.SelectDependencies) SetStep(SetupStep.Install);
+            else if (this.currentStep == SetupStep.SelectDependencies) this.SetStep(SetupStep.Install);
         }
 
         private Button CreateBrowseButton(TextBox attachedTo)
@@ -139,7 +139,7 @@ namespace PlayFOnline
             Button btnBrowse = new Button();
             btnBrowse.Text = "Browse...";
             btnBrowse.Tag = attachedTo;
-            btnBrowse.Click += new EventHandler(btnBrowse_Click);
+            btnBrowse.Click += new EventHandler(this.btnBrowse_Click);
             return btnBrowse;
         }
 
@@ -152,94 +152,94 @@ namespace PlayFOnline
 
         private void frmInstallMain_Load(object sender, EventArgs e)
         {
-            this.Text = this.Text.Replace("[Game]", game.Name);
-            // Load logo
-            txtGameInfo.Text = "";
-            txtGameInfo.Hide();
-            txtInstallPath = new TextBox();
-            txtInstallPath.Width = 400;
-            btnBrowsePath = new Button();
-            btnBrowsePath.Text = "Browse...";
-            btnBrowsePath.Click += new EventHandler(btnBrowsePath_Click);
+            this.Text = this.Text.Replace("[Game]", this.game.Name);
+
+            this.txtGameInfo.Text = string.Empty;
+            this.txtGameInfo.Hide();
+            this.txtInstallPath = new TextBox();
+            this.txtInstallPath.Width = 400;
+            this.btnBrowsePath = new Button();
+            this.btnBrowsePath.Text = "Browse...";
+            this.btnBrowsePath.Click += new EventHandler(this.btnBrowsePath_Click);
 
             lblSpaceRequired.Visible = false; // TODO
 
-            SetStep(SetupStep.SelectPath);
+            this.SetStep(SetupStep.SelectPath);
         }
 
-        private void MessageBoxError(string Message)
+        private void MessageBoxError(string message)
         {
-            MessageBox.Show(Message);
-            logger.Error(Message);
+            MessageBox.Show(message);
+            this.logger.Error(message);
         }
 
-        private void SetStep(SetupStep Step)
+        private void SetStep(SetupStep step)
         {
-            if (SetupControls.ContainsKey(currentStep))
-                foreach (Control ctrl in SetupControls[currentStep])
-                    flowArea.Controls.Remove(ctrl);
+            if (this.setupControls.ContainsKey(this.currentStep))
+                foreach (Control ctrl in this.setupControls[this.currentStep])
+                    this.flowArea.Controls.Remove(ctrl);
 
-            if (Step == SetupStep.SelectPath)
+            if (step == SetupStep.SelectPath)
             {
-                lblSetupText.Text = "Setup will install " + game.Name + " into the selected folder." + Environment.NewLine + Environment.NewLine +
+                lblSetupText.Text = "Setup will install " + this.game.Name + " into the selected folder." + Environment.NewLine + Environment.NewLine +
                     "To continue, click next. If you want to select a different folder, click Browse.";
 
-                btnBack.Enabled = false;
+                this.btnBack.Enabled = false;
 
-                if (!SetupControls.ContainsKey(SetupStep.SelectPath))
+                if (!this.setupControls.ContainsKey(SetupStep.SelectPath))
                 {
-                    SetupControls[Step] = new List<Control>();
+                    this.setupControls[step] = new List<Control>();
                     FlowLayoutPanel flow = new FlowLayoutPanel();
                     flow.AutoSize = true;
-                    flow.Controls.Add(txtInstallPath);
-                    flow.Controls.Add(btnBrowsePath);
-                    SetupControls[Step].Add(flow);
+                    flow.Controls.Add(this.txtInstallPath);
+                    flow.Controls.Add(this.btnBrowsePath);
+                    this.setupControls[step].Add(flow);
                 }
 
-                foreach (Control ctrl in SetupControls[Step])
-                    flowArea.Controls.Add(ctrl);
+                foreach (Control ctrl in this.setupControls[step])
+                    this.flowArea.Controls.Add(ctrl);
             }
-            else if (Step == SetupStep.SelectDependencies)
+            else if (step == SetupStep.SelectDependencies)
             {
-                lblSetupText.Text = "This game has a few dependencies, this means you'll need to own this content to play the game. " + Environment.NewLine + Environment.NewLine + "This usually includes the original Fallout 2 content.";
+                this.lblSetupText.Text = "This game has a few dependencies, this means you'll need to own this content to play the game. " + Environment.NewLine + Environment.NewLine + "This usually includes the original Fallout 2 content.";
 
-                btnBack.Enabled = true;
-                btnNext.Text = "Next >";
+                this.btnBack.Enabled = true;
+                this.btnNext.Text = "Next >";
 
-                if (!SetupControls.ContainsKey(Step))
+                if (!this.setupControls.ContainsKey(step))
                 {
-                    SetupControls[Step] = new List<Control>();
-                    foreach (FOGameDependency depend in installHandler.GetDependencies(game.Id))
+                    this.setupControls[step] = new List<Control>();
+                    foreach (FOGameDependency depend in this.installHandler.GetDependencies(this.game.Id))
                     {
                         Label lbl = new Label();
                         lbl.Text = depend.Description;
                         lbl.AutoSize = true;
                         lbl.Margin = new Padding(0, 0, 0, 3);
-                        SetupControls[Step].Add(lbl);
+                        this.setupControls[step].Add(lbl);
                         FlowLayoutPanel flow = new FlowLayoutPanel();
-                        TextBox txt = CreatePathTextBox();
+                        TextBox txt = this.CreatePathTextBox();
                         txt.ReadOnly = true;
                         txt.Margin = new Padding(0, 0, 3, 0);
                         txt.Tag = depend;
-                        Button btn = CreateBrowseButton(txt);
+                        Button btn = this.CreateBrowseButton(txt);
                         btn.Margin = new Padding(3, 0, 3, 0);
                         flow.Margin = new Padding(0);
                         flow.AutoSize = true;
                         flow.Controls.Add(txt);
                         flow.Controls.Add(btn);
-                        SetupControls[Step].Add(flow);
+                        this.setupControls[step].Add(flow);
                     }
                 }
 
-                foreach (Control ctrl in SetupControls[Step])
-                    flowArea.Controls.Add(ctrl);
+                foreach (Control ctrl in this.setupControls[step])
+                    this.flowArea.Controls.Add(ctrl);
             }
-            else if (Step == SetupStep.Install)
+            else if (step == SetupStep.Install)
             {
-                btnNext.Text = "Install";
+                this.btnNext.Text = "Install";
             }
 
-            currentStep = Step;
+            this.currentStep = step;
         }
     }
 }

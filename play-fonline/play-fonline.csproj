@@ -85,8 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\FOGameDependency.cs" />
     <Compile Include="FOServerQuery.cs" />
-    <Compile Include="FOGameInfo.cs" />
+    <Compile Include="Data\FOGameInfo.cs" />
     <Compile Include="frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -160,6 +161,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>

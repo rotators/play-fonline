@@ -1,36 +1,39 @@
-﻿using System;
-using System.ComponentModel;
-using System.Net;
-using System.Windows.Forms;
-
-// Based on https://github.com/wipe2238/FOUpdaterEx/blob/master/FOUpdater/frmMain.cs
-// Thanks Wipe!
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System;
+    using System.ComponentModel;
+    using System.Net;
+    using System.Windows.Forms;
+
+    /// <summary>
+    /// Form that acts as a downloader.
+    /// Based on https://github.com/wipe2238/FOUpdaterEx/blob/master/FOUpdater/frmMain.cs
+    /// Thanks Wipe!
+    /// </summary>
     public partial class frmDownload : Form
     {
-        private readonly static long Gigabyte = 1024 * Megabyte;
-        private readonly static long Kilobyte = 1024;
-        private readonly static long Megabyte = 1024 * Kilobyte;
-        private readonly static long Terabyte = 1024 * Gigabyte;
+        private static readonly long Gigabyte = 1024 * Megabyte;
+        private static readonly long Kilobyte = 1024;
+        private static readonly long Megabyte = 1024 * Kilobyte;
+        private static readonly long Terabyte = 1024 * Gigabyte;
         private WebClient webClient = new System.Net.WebClient();
         private object winformLocker = new object();
 
         public frmDownload(string game, string url, string path)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            labelDetailed.Text = labelDownloading.Text = "";
+            this.labelDetailed.Text = this.labelDownloading.Text = string.Empty;
             progressFile.Value = 0;
 
             this.Text = "Downloading " + game;
 
             try
             {
-                webClient.Proxy = null;
-                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
-                webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(webClient_DownloadFileCompleted);
-                webClient.DownloadFileAsync(new Uri(url), path);
+                this.webClient.Proxy = null;
+                this.webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.webClient_DownloadProgressChanged);
+                this.webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(this.webClient_DownloadFileCompleted);
+                this.webClient.DownloadFileAsync(new Uri(url), path);
             }
             catch (UriFormatException)
             {
@@ -38,7 +41,7 @@ namespace PlayFOnline
                 this.Close();
             }
 
-            labelDownloading.Text = String.Format(url);
+            this.labelDownloading.Text = string.Format(url);
         }
 
         protected override CreateParams CreateParams
@@ -61,50 +64,50 @@ namespace PlayFOnline
             {
                 long xb = size / b;
                 size -= xb * b;
-                return (xb + what);
+                return xb + what;
             }
-            return ("");
+            return string.Empty;
         }
 
         private static string ToHumanString(long size, bool getFirst = false)
         {
-            string result = "";
+            string result = string.Empty;
             char[] trimEnd = new char[] { ',', ' ' };
 
             result += ToHuman(ref size, Terabyte, "TB, ");
             if (getFirst && result.Length > 0)
-                return (result.TrimEnd(trimEnd));
+                return result.TrimEnd(trimEnd);
 
             result += ToHuman(ref size, Gigabyte, "GB, ");
             if (getFirst && result.Length > 0)
-                return (result.TrimEnd(trimEnd));
+                return result.TrimEnd(trimEnd);
 
             result += ToHuman(ref size, Megabyte, "MB, ");
             if (getFirst && result.Length > 0)
-                return (result.TrimEnd(trimEnd));
+                return result.TrimEnd(trimEnd);
 
             result += ToHuman(ref size, Kilobyte, "KB, ");
             if (getFirst && result.Length > 0)
-                return (result.TrimEnd(trimEnd));
+                return result.TrimEnd(trimEnd);
 
             if (size > 0) result += size + "B";
 
-            return (result.TrimEnd(trimEnd));
+            return result.TrimEnd(trimEnd);
         }
 
         private void buttonCancel_Click_1(object sender, EventArgs e)
         {
-            webClient.CancelAsync();
+            this.webClient.CancelAsync();
             this.Close();
         }
 
         private void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             if (e.Error != null)
-                labelDetailed.Text = e.Error.Message;
+                this.labelDetailed.Text = e.Error.Message;
             else
             {
-                labelDetailed.Text = "Download completed.";
+                this.labelDetailed.Text = "Download completed.";
                 this.Close();
             }
         }
@@ -114,7 +117,7 @@ namespace PlayFOnline
             progressFile.Value = e.ProgressPercentage;
             lock (this.winformLocker)
             {
-                labelDetailed.Text = String.Format("{0} / {1} ({2}%)", ToHumanString(e.BytesReceived, true), ToHumanString(e.TotalBytesToReceive, true), e.ProgressPercentage);
+                this.labelDetailed.Text = string.Format("{0} / {1} ({2}%)", ToHumanString(e.BytesReceived, true), ToHumanString(e.TotalBytesToReceive, true), e.ProgressPercentage);
             }
         }
     }

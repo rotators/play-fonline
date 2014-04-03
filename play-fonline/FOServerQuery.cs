@@ -1,51 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
-
-namespace PlayFOnline
+﻿namespace PlayFOnline
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using NLog;
+    using PlayFOnline.Data;
+
     internal class FOServerQuery
     {
         private string configURL;
         private Logger logger = LogManager.GetLogger("FOServerQuery");
-        private List<FOGameInfo> Servers;
+        private List<FOGameInfo> servers;
         private string statusURL;
 
         public FOServerQuery(string configURL, string statusURL)
         {
             this.configURL = configURL;
             this.statusURL = statusURL;
-            update();
+            this.Update();
         }
 
         public List<FOGameInfo> GetOnlineServers()
         {
-            return this.Servers.Where(x => x.Status != null && x.Status.Players != -1).ToList();
+            return this.servers.Where(x => x.Status != null && x.Status.Players != -1).ToList();
         }
 
         public List<FOGameInfo> GetServers(bool onlyOpen = true)
         {
-            if (onlyOpen) return this.Servers.Where(x => !x.Closed && !x.Singleplayer).ToList();
-            return this.Servers;
+            if (onlyOpen) { return this.servers.Where(x => !x.Closed && !x.Singleplayer).ToList(); }
+            return this.servers;
         }
 
-        public void update()
+        public void Update()
         {
             JsonFetcher jsonFetch = new JsonFetcher();
 
-            JObject o1 = jsonFetch.downloadJson(configURL);
-            JObject o2 = jsonFetch.downloadJson(statusURL);
+            JObject o1 = jsonFetch.DownloadJson(this.configURL);
+            JObject o2 = jsonFetch.DownloadJson(this.statusURL);
 
-            Servers = new List<FOGameInfo>();
+            this.servers = new List<FOGameInfo>();
 
             foreach (JToken serverName in o1["fonline"]["config"]["server"].Children())
             {
                 FOGameInfo server = JsonConvert.DeserializeObject<FOGameInfo>(serverName.First.ToString());
 
-                if (String.IsNullOrEmpty(server.Host) || server.Port == 0) continue; // Usually placeholders.
+                if (string.IsNullOrEmpty(server.Host) || server.Port == 0) { continue; } // Usually placeholders.
 
                 if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
                 {
@@ -61,10 +62,10 @@ namespace PlayFOnline
                         server.Status.PlayersStr = server.Status.Players.ToString();
                 }
                 server.Id = ((JProperty)serverName).Name;
-                if (String.IsNullOrEmpty(server.Website))
+                if (string.IsNullOrEmpty(server.Website))
                     server.Website = server.Link;
 
-                this.Servers.Add(server);
+                this.servers.Add(server);
             }
         }
     }
