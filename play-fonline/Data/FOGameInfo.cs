@@ -35,6 +35,9 @@
 
         void ping_PingCompleted(object sender, PingCompletedEventArgs e)
         {
+            if (e.Reply == null)
+                return;
+
             PingReply reply = e.Reply;
             if (reply.Status == IPStatus.Success)
             {
