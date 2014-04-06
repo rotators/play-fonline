@@ -13,7 +13,7 @@
     public partial class frmInstallMain : Form
     {
         private Button btnBrowsePath;
-        private CheckBox chkReviewScript;
+        //private CheckBox chkReviewScript;
         private SetupStep currentStep;
         private FOGameInfo game;
 

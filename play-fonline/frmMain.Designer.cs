@@ -7,23 +7,24 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.FlowLayoutPanel flowMenu;
-        private System.Windows.Forms.Button btnOptions;
-        private System.Windows.Forms.Button btnInstall;
-        private System.Windows.Forms.CheckBox chkShowOffline;
-        private BrightIdeasSoftware.ObjectListView lstGames;
-        private BrightIdeasSoftware.OLVColumn olvName;
-        private BrightIdeasSoftware.OLVColumn olvPlayers;
-        private BrightIdeasSoftware.OLVColumn olvColumn2;
-        private BrightIdeasSoftware.OLVColumn olvColumn3;
-        private BrightIdeasSoftware.OLVColumn olvColumn4;
-        private BrightIdeasSoftware.OLVColumn olvColumn5;
-        private BrightIdeasSoftware.OLVColumn olvInstallPath;
-        private System.Windows.Forms.StatusStrip statusBar;
-        private System.Windows.Forms.Button btnRefresh;
-        private System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
-        private System.Windows.Forms.LinkLabel linkFoDev;
-        private System.Windows.Forms.BindingSource frmMainBindingSource;
+        public System.Windows.Forms.FlowLayoutPanel flowMenu;
+        public System.Windows.Forms.Button btnOptions;
+        public System.Windows.Forms.Button btnInstall;
+        public System.Windows.Forms.CheckBox chkShowOffline;
+        public BrightIdeasSoftware.ObjectListView lstGames;
+        public BrightIdeasSoftware.OLVColumn olvName;
+        public BrightIdeasSoftware.OLVColumn olvPlayers;
+        public BrightIdeasSoftware.OLVColumn olvColumn2;
+        public BrightIdeasSoftware.OLVColumn olvColumn3;
+        public BrightIdeasSoftware.OLVColumn olvColumn4;
+        public BrightIdeasSoftware.OLVColumn olvColumn5;
+        public BrightIdeasSoftware.OLVColumn olvInstallPath;
+        public BrightIdeasSoftware.OLVColumn olvPing;
+        public System.Windows.Forms.StatusStrip statusBar;
+        public System.Windows.Forms.Button btnRefresh;
+        public System.Windows.Forms.ToolStripStatusLabel statusBarLabel;
+        public System.Windows.Forms.LinkLabel linkFoDev;
+        public System.Windows.Forms.BindingSource frmMainBindingSource;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -89,7 +90,6 @@
             this.btnInstall.TabIndex = 8;
             this.btnInstall.Text = "Install/Add";
             this.btnInstall.UseVisualStyleBackColor = true;
-            this.btnInstall.Click += new System.EventHandler(this.btnInstall_Click);
             // 
             // btnOptions
             // 
@@ -110,7 +110,6 @@
             this.chkShowOffline.TabIndex = 8;
             this.chkShowOffline.Text = "Show offline servers";
             this.chkShowOffline.UseVisualStyleBackColor = true;
-            this.chkShowOffline.CheckedChanged += new System.EventHandler(this.chkShowOffline_CheckedChanged);
             // 
             // lstGames
             // 
@@ -145,8 +144,6 @@
             this.lstGames.UseCompatibleStateImageBehavior = false;
             this.lstGames.UseHyperlinks = true;
             this.lstGames.View = System.Windows.Forms.View.Details;
-            this.lstGames.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.lstGames_FormatRow);
-            this.lstGames.SelectedIndexChanged += new System.EventHandler(this.lstGames_SelectedIndexChanged);
             // 
             // olvName
             // 
@@ -210,7 +207,6 @@
             this.btnRefresh.TabIndex = 10;
             this.btnRefresh.Text = "Update list";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // linkFoDev
             // 
@@ -222,7 +218,6 @@
             this.linkFoDev.TabIndex = 14;
             this.linkFoDev.TabStop = true;
             this.linkFoDev.Text = "http://fodev.net";
-            this.linkFoDev.MouseClick += new System.Windows.Forms.MouseEventHandler(this.linkFoDev_MouseClick);
             // 
             // frmMainBindingSource
             // 
@@ -247,7 +242,6 @@
             this.MinimumSize = new System.Drawing.Size(460, 250);
             this.Name = "frmMain";
             this.Text = "Play FOnline [Version]";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.flowMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).EndInit();
             this.statusBar.ResumeLayout(false);
@@ -259,8 +253,6 @@
         }
 
         #endregion
-
-        private BrightIdeasSoftware.OLVColumn olvPing;
 
     }
 }

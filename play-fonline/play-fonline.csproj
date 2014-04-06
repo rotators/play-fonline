@@ -85,9 +85,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\FOGameDependency.cs" />
-    <Compile Include="FOServerQuery.cs" />
-    <Compile Include="Data\FOGameInfo.cs" />
+    <Compile Include="Core\Data\FOGameDependency.cs" />
+    <Compile Include="Core\FOServerManager.cs" />
+    <Compile Include="Core\FOServerQuery.cs" />
+    <Compile Include="Core\Data\FOGameInfo.cs" />
+    <Compile Include="Core\Resources\JsonSerializer.cs" />
     <Compile Include="frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,18 +114,21 @@
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="InstallHandler.cs" />
-    <Compile Include="JsonFetcher.cs" />
-    <Compile Include="LogoManager.cs" />
+    <Compile Include="Core\Data\InstallHandler.cs" />
+    <Compile Include="Core\Resources\JsonFetcher.cs" />
+    <Compile Include="Core\Resources\LogoManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sandbox.cs" />
-    <Compile Include="Scripts\InstallHost.cs" />
-    <Compile Include="Scripts\ResolveHost.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="TestJson.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="Win32.cs" />
+    <Compile Include="Core\Test\Sandbox.cs" />
+    <Compile Include="Core\Scripts\InstallHost.cs" />
+    <Compile Include="Core\Scripts\ResolveHost.cs" />
+    <Compile Include="Core\Settings.cs" />
+    <Compile Include="Core\Test\TestJson.cs" />
+    <Compile Include="Core\Utils\Utils.cs" />
+    <Compile Include="Core\Utils\Win32.cs" />
+    <Compile Include="UI\GenericEventArgs.cs" />
+    <Compile Include="UI\Presenter\MainPresenter.cs" />
+    <Compile Include="UI\View\MainView.cs" />
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
@@ -162,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

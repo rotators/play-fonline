@@ -7,7 +7,7 @@
     using System.Net.NetworkInformation;
     using System.Threading;
 
-    public class FOGameInfo
+    public class FOGameInfo : EventArgs
     {
         public bool Closed         { get; set; }
         public string Host         { get; set; }

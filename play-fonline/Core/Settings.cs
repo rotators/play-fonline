@@ -1,4 +1,4 @@
-﻿namespace PlayFOnline
+﻿namespace PlayFOnline.Core
 {
     using System;
     using System.Collections.Generic;
@@ -18,39 +18,6 @@
 
         public PathSettings Paths { get; set; }
         public UISettings UI { get; set; }
-
-        public void AddDependency(FOGameDependency depend, string Path)
-        {
-            FOGameDependency newDepend = depend;
-            newDepend.Path = Path;
-            if (this.Dependencies == null) this.Dependencies = new List<FOGameDependency>();
-            this.Dependencies.Add(newDepend);
-        }
-
-        public string GetInstallPath(string id)
-        {
-            return this.Games.Find(x => x.Id == id).Path;
-        }
-
-        public bool HasDependency(string name)
-        {
-            if (this.Dependencies == null) return false;
-            return this.Dependencies.Exists(x => x.Name == name);
-        }
-
-        public void InstalledGame(string id, string path)
-        {
-            InstalledGame game = new PlayFOnline.InstalledGame();
-            game.Id = id;
-            game.Path = path;
-            if (this.Games == null) this.Games = new List<PlayFOnline.InstalledGame>();
-                this.Games.Add(game);
-        }
-        public bool IsInstalled(string id)
-        {
-            if (this.Games == null) return false;
-            return this.Games.Exists(x => x.Id == id);
-        }
     }
 
     public class InstalledGame
@@ -63,6 +30,7 @@
     {
         public string DownloadTemp { get; set; }
         public string Scripts { get; set; }
+        public string Logos { get; set; }
     }
 
     public class UISettings

@@ -3,8 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Windows.Forms;
-
+    using PlayFOnline.Core;
+    using PlayFOnline.UI;
+    using PlayFOnline.UI.View;
+    using PlayFOnline.UI.Presenter;
+    
     public static class Program
     {
         /// <summary>
@@ -13,9 +16,9 @@
         [STAThread]
         public static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            MainView view = new MainView();
+            MainPresenter presenter = new MainPresenter(view, SettingsManager.LoadSettings());
+            presenter.StartApplication();
         }
     }
 }

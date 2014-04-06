@@ -6,7 +6,7 @@
     using System.Windows.Forms;
 
     /// <summary>
-    /// Form that acts as a downloader.
+    /// Form that displays downloading.
     /// Based on https://github.com/wipe2238/FOUpdaterEx/blob/master/FOUpdater/frmMain.cs
     /// Thanks Wipe!
     /// </summary>
