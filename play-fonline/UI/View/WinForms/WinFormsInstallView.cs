@@ -9,31 +9,10 @@
     using PlayFOnline.UI.Presenter;
     using PlayFOnline.Data;
 
-    public interface IInstallView : IBaseView
-    {
-        event EventHandler NextStep;
-        event EventHandler PreviousStep;
-        event EventHandler InstallPathSelect;
-        event ItemEventHandler<FOGameDependency> SelectDependencyPath;
-
-        void Close();
-        void Show();
-        void Load();
-
-        void SetTitle(string text);
-        void SetLogo(string fileName);
-        void SetSetupText(string text);
-        void SetInstallPath(string text);
-        void SetDependencyPath(FOGameDependency dependency, string path);
-        void SetDependencies(List<FOGameDependency> dependencies);
-        void SetStep(SetupStep currentStep, SetupStep step);
-        string SelectFileName(string name);
-    }
-
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class InstallView : BaseWinFormsView, IInstallView
+    public class WinFormsInstallView : WinFormsBaseView, IInstallView
     {
         frmInstallMain Form;
         Button btnBrowsePath;

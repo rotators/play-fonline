@@ -6,6 +6,7 @@
     using PlayFOnline.Core;
     using PlayFOnline.UI;
     using PlayFOnline.UI.View;
+    using PlayFOnline.UI.View.Console;
     using PlayFOnline.UI.Presenter;
     
     public static class Program
@@ -16,7 +17,7 @@
         [STAThread]
         public static void Main()
         {
-            MainView view = new MainView();
+            var view = new WinFormsMainView();
             MainPresenter presenter = new MainPresenter(view, SettingsManager.LoadSettings());
             presenter.StartApplication();
         }

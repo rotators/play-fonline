@@ -155,7 +155,7 @@
             else
             {
                 InstallPresenter installer = new InstallPresenter(
-                    new InstallView(),
+                    new WinFormsInstallView(),
                     game, installHandler, 
                     logoManager, 
                     this.settings.Paths.Scripts, 
@@ -242,7 +242,7 @@
                 var online = servers.Where(x => !x.Status.IsOffline());
                 this.SetOnlineTitleInfo(online.Sum(x => x.Status.Players), online.Count());
 
-                this.PingServers(servers.ToList());
+                //this.PingServers(servers.ToList());
 
                 this.view.RefreshServerList(servers);
                 

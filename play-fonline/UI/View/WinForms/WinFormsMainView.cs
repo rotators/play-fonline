@@ -8,36 +8,11 @@
     using PlayFOnline.Core;
     using System.Windows.Forms;
     using System.Drawing;
+    using System.Runtime.InteropServices;
 
-    public interface IMainView : IBaseView
-    {
-        event EventHandler RefreshServers;
-        event EventHandler FoDevLinkClicked;
-        event EventHandler<FOGameInfo> InstallGame;
-        event EventHandler<FOGameInfo> ChangedGame;
-        event ItemEventHandler<string> LaunchProgram;
-        event ItemEventHandler<bool> ShowOfflineChanged;
+    
 
-        bool AskYesNoQuestion(string question, string title);
-        string GetFolderPath();
-
-        void ShowError(string errorMsg);
-        void ShowInfo(string infoMsg);
-        void RefreshServerList(List<FOGameInfo> servers);
-        
-        void UpdateStatusBar(string text);
-        UISettings GetWindowProperties();
-        void ClearGameSelection();
-        void AddInstallButton();
-        void SelectGame(FOGameInfo game, List<FOGameLaunchProgram> programs);
-        void SetWindowProperties(UISettings settings);
-        void SetTitle(string title);
-
-        void Load();
-        void StartApplication();
-    }
-
-    public class MainView : BaseWinFormsView, IMainView
+    public class WinFormsMainView : WinFormsBaseView, IMainView
     {
         private frmMain Main;
 

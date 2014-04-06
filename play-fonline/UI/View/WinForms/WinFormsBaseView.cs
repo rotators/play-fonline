@@ -1,10 +1,4 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="BaseWinFormsView.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
-
-namespace PlayFOnline.UI.View
+﻿namespace PlayFOnline.UI.View
 {
     using System;
     using System.Collections.Generic;
@@ -12,15 +6,7 @@ namespace PlayFOnline.UI.View
     using System.Text;
     using System.Windows.Forms;
 
-    public interface IBaseView
-    {
-        void ShowInfo(string infoMsg);
-        void ShowError(string errorMsg);
-        string GetFolderPath();
-        bool AskYesNoQuestion(string question, string title);
-    }
-
-    public class BaseWinFormsView
+    public class WinFormsBaseView
     {
         public void ShowInfo(string infoMsg)
         {
