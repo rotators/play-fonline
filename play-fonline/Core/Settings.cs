@@ -5,6 +5,7 @@
     using System.IO;
     using Newtonsoft.Json;
     using PlayFOnline.Data;
+    using NLog;
 
     public class FOSettings
     {
@@ -13,6 +14,7 @@
         public List<FOGameDependency> Dependencies { get; set; }
         public List<InstalledGame> Games { get; set; }
 
+        public string CombinedUrl { get; set; }
         public string InstallUrl { get; set; }
         public string StatusUrl { get; set; }
 
@@ -44,17 +46,30 @@
 
     internal static class SettingsManager
     {
+        public static Logger logger = LogManager.GetLogger("SettingsManager");
         public static readonly string SettingsPath = Path.Combine(Environment.CurrentDirectory, "settings.json");
 
         public static FOSettings LoadSettings()
         {
+            if (!File.Exists(SettingsPath))
+            {
+                logger.Error("Unable to find settings on {0}", SettingsPath);
+                return null;
+            }
+
+            logger.Info("Loading settings from {0}", SettingsPath);
             string jsonSettings = File.ReadAllText(SettingsPath);
-            return JsonConvert.DeserializeObject<FOSettings>(jsonSettings);
+            logger.Info("Read settings file.");
+            var settings = JsonConvert.DeserializeObject<FOSettings>(jsonSettings);
+            logger.Info("Deserialized settings.");
+            return settings;
         }
 
         public static void SaveSettings(FOSettings settings)
         {
+            logger.Info("Serializing settings.");
             string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+            logger.Info("Saving settings to {0}.", SettingsPath);
             File.WriteAllText(SettingsPath, json);
         }
     }

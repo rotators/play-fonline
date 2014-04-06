@@ -9,7 +9,7 @@
     using System.Windows.Forms;
     using System.Drawing;
 
-    public interface IMainView
+    public interface IMainView : IBaseView
     {
         event EventHandler RefreshServers;
         event EventHandler FoDevLinkClicked;
@@ -27,7 +27,9 @@
         
         void UpdateStatusBar(string text);
         UISettings GetWindowProperties();
-        void SelectGame(FOGameInfo game, List<FOGameLaunchProgram> programs, bool installed);
+        void ClearGameSelection();
+        void AddInstallButton();
+        void SelectGame(FOGameInfo game, List<FOGameLaunchProgram> programs);
         void SetWindowProperties(UISettings settings);
         void SetTitle(string title);
 
@@ -35,7 +37,7 @@
         void StartApplication();
     }
 
-    public class MainView : IMainView
+    public class MainView : BaseWinFormsView, IMainView
     {
         private frmMain Main;
 
@@ -54,7 +56,6 @@
             this.Main.olvInstallPath.AspectToStringConverter = delegate(object x)
             {
                 string path = (string)x;
-                MessageBox.Show(path);
                 if (string.IsNullOrWhiteSpace(path))
                     return "Not installed/added";
                 return path;
@@ -71,7 +72,7 @@
             this.Main.btnRefresh.Click += RefreshServers;
             this.Main.chkShowOffline.CheckedChanged += new EventHandler(chkShowOffline_CheckedChanged);
             this.Main.linkFoDev.Click += FoDevLinkClicked;
-            this.Main.lstGames.SelectedIndexChanged += new EventHandler(lstGames_SelectedIndexChanged);
+            this.Main.lstGames.SelectionChanged += new EventHandler(lstGames_SelectedIndexChanged);
             this.Main.btnInstall.Click += new EventHandler(btnInstall_Click);
         }
 
@@ -97,54 +98,34 @@
             ChangedGame(this, game);
         }
 
-        public void ShowInfo(string infoMsg)        
+        public void ClearGameSelection()
         {
-            MessageBox.Show(infoMsg, "Play FOnline", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        public void ShowError(string errorMsg)
-        {
-            MessageBox.Show(errorMsg, "Play FOnline", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public string GetFolderPath()
-        {
-            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-            folderBrowser.ShowNewFolderButton = false;
-            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                return string.Empty;
-            return folderBrowser.SelectedPath;
-        }
-
-        public bool AskYesNoQuestion(string question, string title)
-        {
-            return (MessageBox.Show(question, string.Empty, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
-        }
-
-        public void SelectGame(FOGameInfo game, List<FOGameLaunchProgram> programs, bool installed)
-        {
-            this.Main.btnInstall.Enabled = !installed;
-            this.Main.btnOptions.Enabled = installed;
+           // this.Main.btnInstall.Enabled = !installed;
+           // this.Main.btnOptions.Enabled = installed;
 
             var controls = this.Main.flowMenu.Controls;
 
             this.Main.flowMenu.Controls.Clear();
             this.Main.flowMenu.Update();
-            if (installed)
+        }
+
+        public void AddInstallButton()
+        {
+            this.Main.flowMenu.Controls.Add(this.Main.btnInstall);
+        }
+
+        public void SelectGame(FOGameInfo game, List<FOGameLaunchProgram> programs)
+        {
+            foreach (FOGameLaunchProgram program in programs)
             {
-                foreach (FOGameLaunchProgram program in programs)
-                {
-                    Button btnCustom = new Button();
-                    btnCustom.Text = program.Name;
-                    btnCustom.Width = this.Main.btnInstall.Width;
-                    btnCustom.Height = this.Main.btnInstall.Height;
-                    btnCustom.Tag = program.File;
-                    btnCustom.Click += new EventHandler(btnCustom_Click);
-                    this.Main.flowMenu.Controls.Add(btnCustom);
-                }
+                Button btnCustom = new Button();
+                btnCustom.Text = program.Name;
+                btnCustom.Width = this.Main.btnInstall.Width;
+                btnCustom.Height = this.Main.btnInstall.Height;
+                btnCustom.Tag = program.File;
+                btnCustom.Click += new EventHandler(btnCustom_Click);
+                this.Main.flowMenu.Controls.Add(btnCustom);
             }
-            else
-                this.Main.flowMenu.Controls.Add(this.Main.btnInstall);
         }
 
         void btnCustom_Click(object sender, EventArgs e)

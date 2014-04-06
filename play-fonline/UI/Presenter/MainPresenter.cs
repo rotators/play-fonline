@@ -91,6 +91,11 @@
             this.view.Load();
             this.view.SetTitle(this.GetBaseTitle());
 
+            if (this.settings == null)
+            {
+                this.view.ShowError("Unable to load settings!");
+            }
+
             // Initialize settings...
             if (this.settings.UI == null)
                 this.settings.UI = new UISettings();
@@ -109,12 +114,14 @@
             WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
 
             JsonFetcher jsonFetch = new JsonFetcher();
-            JsonSerializer jsonSerialize = new JsonSerializer();
+            FOJsonDeserializer jsonDeserialize = new FOJsonDeserializer();
 
             var jsonNode = jsonFetch.DownloadJson(this.settings.InstallUrl);
-            this.installHandler = new InstallHandler(jsonSerialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
+            this.installHandler = new InstallHandler(jsonDeserialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
             this.logoManager = new LogoManager(this.settings.Paths.Logos, "http://fodev.net/status/json/logo/");
-            this.serverManager = new FOServerManager(settings.ConfigUrl, settings.StatusUrl);
+            this.serverManager = new FOServerManager(
+                new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl), 
+                this.installHandler);
 
             this.UpdateGameList();
 
@@ -143,21 +150,27 @@
 
                 string msg = "Successfully added " + game.Name + "!";
                 this.view.ShowInfo(msg);
-                //this.logger.Info(msg);
+                this.installHandler.AddInstalledGame(game.Id, game.InstallPath);
             }
             else
             {
-                frmInstallMain installMain = new frmInstallMain(game, this.installHandler, this.logoManager, this.settings.Paths.Scripts);
-                installMain.ShowDialog();
+                InstallPresenter installer = new InstallPresenter(
+                    new InstallView(),
+                    game, installHandler, 
+                    logoManager, 
+                    this.settings.Paths.Scripts, 
+                    this.settings.Paths.DownloadTemp);
+                installer.Show();
 
-                if (!installMain.IsSuccess)
+                if (!installer.IsSuccess)
                     return false;
+
+                this.currentGame.InstallPath = this.installHandler.GetInstallPath(game.Id);
 
                 string msg = "Successfully installed " + game.Name + "!";
                 this.view.ShowInfo(msg);
             }
-
-            this.installHandler.InstalledGame(game.Id, game.InstallPath);
+            this.settings.Games = this.installHandler.GetInstalledGames();
             SettingsManager.SaveSettings(this.settings);
             return true;
         }
@@ -198,16 +211,19 @@
 
         private void SelectGame(FOGameInfo game)
         {
+            if (game == null) return;
+
             bool installed = installHandler.IsInstalled(game.Id);
-
-            // No need to refresh anything since both games are not installed.
-            //if (!installHandler.IsInstalled(currentGame.Id) && !installed)
-            //    return;
-
-            var programs = this.installHandler.GetLaunchPrograms(game.Id);
-
-            this.view.SelectGame(game, programs, installed);
-
+            this.view.ClearGameSelection();
+            if (!this.installHandler.IsInstalled(game.Id))
+            {
+                this.view.AddInstallButton();
+            }
+            else 
+            { 
+                var programs = this.installHandler.GetLaunchPrograms(game.Id);
+                this.view.SelectGame(game, programs);
+            }
             this.currentGame = game;
         }
 
@@ -218,6 +234,8 @@
             {
                 //var servers = this.GetServers();
                 //servers.Where(x => this.settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = this.settings.GetInstallPath(x.Id));
+
+                serverManager.UpdateStatus();
 
                 var servers = serverManager.GetServers(!this.showOffline);
 

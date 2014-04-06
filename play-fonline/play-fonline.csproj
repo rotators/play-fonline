@@ -86,10 +86,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Data\FOGameDependency.cs" />
+    <Compile Include="Core\FOServerJson.cs" />
     <Compile Include="Core\FOServerManager.cs" />
     <Compile Include="Core\FOServerQuery.cs" />
     <Compile Include="Core\Data\FOGameInfo.cs" />
-    <Compile Include="Core\Resources\JsonSerializer.cs" />
+    <Compile Include="Core\Resources\JsonDeserializer.cs" />
     <Compile Include="frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,7 +128,10 @@
     <Compile Include="Core\Utils\Utils.cs" />
     <Compile Include="Core\Utils\Win32.cs" />
     <Compile Include="UI\GenericEventArgs.cs" />
+    <Compile Include="UI\Presenter\InstallPresenter.cs" />
     <Compile Include="UI\Presenter\MainPresenter.cs" />
+    <Compile Include="UI\View\BaseWinFormsView.cs" />
+    <Compile Include="UI\View\InstallView.cs" />
     <Compile Include="UI\View\MainView.cs" />
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>

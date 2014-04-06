@@ -32,6 +32,7 @@
             }
 
             ZipFile zip;
+            //zip.ExtractSelectedEntries("*.*", "", installDir, ExtractExistingFileAction.OverwriteSilently)
             try
             {
                 zip = ZipFile.Read(filename);
@@ -128,6 +129,7 @@
                        loadedDat.FileList.Exists(x => x.FileName.ToLower() == "hanpwrbi.frm") &&
                        loadedDat.FileList.Exists(x => x.FileName.ToLower() == "hanpwrbl.frm");
            }
+           loadedDat.Close();
            return valid;
         }
     }

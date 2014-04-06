@@ -12,10 +12,6 @@
     /// </summary>
     public partial class frmDownload : Form
     {
-        private static readonly long Gigabyte = 1024 * Megabyte;
-        private static readonly long Kilobyte = 1024;
-        private static readonly long Megabyte = 1024 * Kilobyte;
-        private static readonly long Terabyte = 1024 * Gigabyte;
         private WebClient webClient = new System.Net.WebClient();
         private object winformLocker = new object();
 
@@ -71,6 +67,11 @@
 
         private static string ToHumanString(long size, bool getFirst = false)
         {
+            long Kilobyte = 1024;
+            long Megabyte = 1024 * Kilobyte;
+            long Gigabyte = 1024 * Megabyte;
+            long Terabyte = 1024 * Gigabyte;
+
             string result = string.Empty;
             char[] trimEnd = new char[] { ',', ' ' };
 

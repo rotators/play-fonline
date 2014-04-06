@@ -58,6 +58,7 @@
             this.olvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn3 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn4 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvPing = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvInstallPath = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn5 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.statusBar = new System.Windows.Forms.StatusStrip();
@@ -65,7 +66,6 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.linkFoDev = new System.Windows.Forms.LinkLabel();
             this.frmMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.olvPing = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
             this.statusBar.SuspendLayout();
@@ -83,7 +83,6 @@
             // 
             // btnInstall
             // 
-            this.btnInstall.Enabled = false;
             this.btnInstall.Location = new System.Drawing.Point(3, 3);
             this.btnInstall.Name = "btnInstall";
             this.btnInstall.Size = new System.Drawing.Size(103, 28);
@@ -173,6 +172,11 @@
             this.olvColumn4.AspectName = "Port";
             this.olvColumn4.Text = "Port";
             // 
+            // olvPing
+            // 
+            this.olvPing.AspectName = "Status.Latency";
+            this.olvPing.Text = "Ping";
+            // 
             // olvInstallPath
             // 
             this.olvInstallPath.AspectName = "InstallPath";
@@ -222,11 +226,6 @@
             // frmMainBindingSource
             // 
             this.frmMainBindingSource.DataSource = typeof(PlayFOnline.frmMain);
-            // 
-            // olvPing
-            // 
-            this.olvPing.AspectName = "Status.Latency";
-            this.olvPing.Text = "Ping";
             // 
             // frmMain
             // 

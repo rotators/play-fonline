@@ -10,27 +10,39 @@
     public class FOServerManager
     {
         FOServerQuery query;
+        InstallHandler installHandler;
 
-
-        public FOServerManager(string ConfigUrl, string StatusUrl)
+        public FOServerManager(FOServerJson foServerJson, InstallHandler installHandler)
         {
-            this.query = new FOServerQuery(ConfigUrl, StatusUrl);
+            this.query = new FOServerQuery(foServerJson);
+            this.installHandler = installHandler;
+        }
+
+        private List<FOGameInfo> SetInstallInfo(List<FOGameInfo> servers)
+        {
+            foreach (var server in servers)
+            {
+                if (installHandler.IsInstalled(server.Id))
+                    server.InstallPath = this.installHandler.GetInstallPath(server.Id);
+            }
+            return servers;
         }
 
         private List<FOGameInfo> GetOpenServers()
         {
-            return query.GetServers(true);
+            return SetInstallInfo(query.GetServers(true));
         }
 
         private bool IsInstalled(string gameId)
         {
-            return false;
+            return installHandler.IsInstalled(gameId);
         }
 
         public List<FOGameInfo> GetOfflineServers()
         {
             var servers = this.GetOpenServers();
-            return servers.Where(x => x.Status.IsOffline()).ToList();
+            servers = servers.Where(x => x.Status.IsOffline()).ToList();
+            return SetInstallInfo(servers);
         }
 
         public List<FOGameInfo> GetServers(bool onlyOnline)
@@ -39,6 +51,11 @@
             if (onlyOnline)
                 servers = servers.Where(x => !x.Status.IsOffline() || this.IsInstalled(x.Id)).ToList(); // Always add installed, even if offline
             return servers;
+        }
+
+        public void UpdateStatus()
+        {
+            this.query.UpdateStatus();
         }
     }
 }

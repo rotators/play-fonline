@@ -7,18 +7,18 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.Panel panelInfo;
-        private System.Windows.Forms.PictureBox pctGameLogo;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnBack;
-        private System.Windows.Forms.Button btnNext;
-        private System.Windows.Forms.Label lblSeperator;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblSpaceRequired;
-        private System.Windows.Forms.TextBox txtGameInfo;
-        private System.Windows.Forms.FlowLayoutPanel flowArea;
-        private System.Windows.Forms.Label lblSetupText;
+        public System.Windows.Forms.Panel panelInfo;
+        public System.Windows.Forms.PictureBox pctGameLogo;
+        public System.Windows.Forms.Panel panel1;
+        public System.Windows.Forms.Button btnCancel;
+        public System.Windows.Forms.Button btnBack;
+        public System.Windows.Forms.Button btnNext;
+        public System.Windows.Forms.Label lblSeperator;
+        public System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label lblSpaceRequired;
+        public System.Windows.Forms.TextBox txtGameInfo;
+        public System.Windows.Forms.FlowLayoutPanel flowArea;
+        public System.Windows.Forms.Label lblSetupText;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -128,7 +128,6 @@
             this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnBack
             // 
@@ -138,7 +137,6 @@
             this.btnBack.TabIndex = 6;
             this.btnBack.Text = "< Back ";
             this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // btnNext
             // 
@@ -148,7 +146,6 @@
             this.btnNext.TabIndex = 5;
             this.btnNext.Text = "Next >";
             this.btnNext.UseVisualStyleBackColor = true;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // lblSpaceRequired
             // 
@@ -193,7 +190,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Installing - [Game]";
-            this.Load += new System.EventHandler(this.frmInstallMain_Load);
             this.panelInfo.ResumeLayout(false);
             this.panelInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctGameLogo)).EndInit();

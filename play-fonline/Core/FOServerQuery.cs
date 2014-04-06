@@ -7,18 +7,21 @@
     using Newtonsoft.Json.Linq;
     using NLog;
     using PlayFOnline.Data;
+    using PlayFOnline.Core.Resources;
 
     internal class FOServerQuery
     {
         private string configURL;
         private Logger logger = LogManager.GetLogger("FOServerQuery");
         private List<FOGameInfo> servers;
+        private FOServerJson json;
+        private FOJsonDeserializer deserializer;
         private string statusURL;
 
-        public FOServerQuery(string configURL, string statusURL)
+        public FOServerQuery(FOServerJson json)
         {
-            this.configURL = configURL;
-            this.statusURL = statusURL;
+            this.json = json;
+            this.deserializer = new FOJsonDeserializer();
             this.Update();
         }
 
@@ -33,40 +36,47 @@
             return this.servers;
         }
 
+        private FOGameStatus ProcessStatus(FOGameStatus status)
+        {
+            if (status.IsOffline())
+            {
+                if (status.Seen != -1)
+                    status.PlayersStr = "Offline - Down for " + Utils.GetReadableTime(Utils.GetCurrentUnixTime() - status.Seen);
+                else
+                    status.PlayersStr = "Offline";
+            }
+            else
+                status.PlayersStr = status.Players.ToString();
+
+            return status;
+        }
+
+        public void UpdateStatus()
+        {
+            JObject data = json.GetStatus();
+            foreach(var server in this.servers)
+            {
+                server.Status = this.deserializer.GetServerStatus(data, server.Id);
+                server.Status = ProcessStatus(server.Status);
+            }
+        }
+
         public void Update()
         {
-            JsonFetcher jsonFetch = new JsonFetcher();
+            JObject data = json.GetCombined();
 
-            JObject o1 = jsonFetch.DownloadJson(this.configURL);
-            JObject o2 = jsonFetch.DownloadJson(this.statusURL);
-
-            this.servers = new List<FOGameInfo>();
-
-            foreach (JToken serverName in o1["fonline"]["config"]["server"].Children())
+            var servers = new List<FOGameInfo>();
+            foreach(var server in deserializer.GetServers(data))
             {
-                FOGameInfo server = JsonConvert.DeserializeObject<FOGameInfo>(serverName.First.ToString());
+                if (string.IsNullOrEmpty(server.Host) || server.Port == 0 || server.Closed) { continue; } // Port 0 or empty host is usually placeholders.
 
-                if (string.IsNullOrEmpty(server.Host) || server.Port == 0) { continue; } // Usually placeholders.
-
-                if (!server.Closed && o2["fonline"]["status"]["server"][((JProperty)serverName).Name] != null)
-                {
-                    server.Status = JsonConvert.DeserializeObject<FOGameStatus>(o2["fonline"]["status"]["server"][((JProperty)serverName).Name].ToString());
-                    if (server.Status.IsOffline())
-                    {
-                        if (server.Status.Seen != -1)
-                            server.Status.PlayersStr = "Offline - Down for " + Utils.GetReadableTime(Utils.GetCurrentUnixTime() - server.Status.Seen);
-                        else
-                            server.Status.PlayersStr = "Offline";
-                    }
-                    else
-                        server.Status.PlayersStr = server.Status.Players.ToString();
-                }
-                server.Id = ((JProperty)serverName).Name;
                 if (string.IsNullOrEmpty(server.Website))
                     server.Website = server.Link;
 
-                this.servers.Add(server);
+                server.Status = ProcessStatus(server.Status);
+                servers.Add(server);
             }
+            this.servers = servers;
         }
     }
 }
