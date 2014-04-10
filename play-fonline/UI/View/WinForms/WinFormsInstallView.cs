@@ -61,10 +61,6 @@
 
         public void SetDependencyPath(FOGameDependency dependency, string path)
         {
-            //v//ar items = this.Form.Controls;
-            //foreach(control.)
-
-            //var item = items.Cast<Control>().FirstOrDefault(control => );
             TextBox txt = this.FindByDependency(this.Form, dependency);
             txt.Text = path;
         }

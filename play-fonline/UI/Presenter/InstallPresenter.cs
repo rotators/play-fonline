@@ -2,13 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Net;
     using NLog;
     using PlayFOnline.Data;
     using PlayFOnline.UI.View;
-using System.IO;
     using PlayFOnline.Scripts;
 
     public enum SetupStep
@@ -40,6 +40,16 @@ using System.IO;
 
         public bool IsSuccess { get; set; }
 
+        public InstallPresenter(IInstallView view, FOGameInfo game, InstallHandler installHandler, LogoManager logoManager, string scriptPath, string tempPath)
+        {
+            this.view = view;
+            this.game = game;
+            this.scriptPath = scriptPath;
+            this.installHandler = installHandler;
+            this.logoManager = logoManager;
+            this.tempPath = tempPath;
+        }
+
         void OnInstallPathSelect(object sender, EventArgs e)
         {
             string path = this.view.GetFolderPath();
@@ -64,16 +74,6 @@ using System.IO;
         void OnPreviousStep(object sender, EventArgs e)
         {
             this.Back();
-        }
-
-        public InstallPresenter(IInstallView view, FOGameInfo game, InstallHandler installHandler, LogoManager logoManager, string scriptPath, string tempPath)
-        {
-            this.view = view;
-            this.game = game;
-            this.scriptPath = scriptPath;
-            this.installHandler = installHandler;
-            this.logoManager = logoManager;
-            this.tempPath = tempPath;
         }
 
         public string GetInstallPath() { return this.installPath; }

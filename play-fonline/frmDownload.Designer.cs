@@ -5,14 +5,14 @@
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
-        private System.Windows.Forms.GroupBox groupMain;
-        private System.Windows.Forms.ProgressBar progressFile;
-        private System.Windows.Forms.Label labelDetailed;
-        private System.Windows.Forms.Panel panelButtons;
-        private System.Windows.Forms.Label labelDownloading;
-        private System.Windows.Forms.Button buttonCancel;
+        public System.ComponentModel.IContainer components = null;
+        public System.ComponentModel.BackgroundWorker backgroundWorker;
+        public System.Windows.Forms.GroupBox groupMain;
+        public System.Windows.Forms.ProgressBar progressFile;
+        public System.Windows.Forms.Label labelDetailed;
+        public System.Windows.Forms.Panel panelButtons;
+        public System.Windows.Forms.Label labelDownloading;
+        public System.Windows.Forms.Button buttonCancel;
 
         /// <summary>
         /// Clean up any resources being used.

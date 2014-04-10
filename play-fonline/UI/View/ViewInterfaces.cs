@@ -16,6 +16,21 @@
         bool AskYesNoQuestion(string question, string title);
     }
 
+    public interface IDownloadView
+    {
+        event EventHandler CancelDownload;
+
+        void Load();
+        void Close();
+        void Show();
+        void SetTitle(string text);
+        void SetStatus(string text);
+        void ShowError(string error);
+
+        void SetDownloadUrl(string text);
+        void UpdateProgress(int percentage, string statusText);
+    }
+
     public interface IInstallView : IBaseView
     {
         event EventHandler NextStep;

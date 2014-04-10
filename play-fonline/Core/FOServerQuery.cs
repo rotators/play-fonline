@@ -11,12 +11,10 @@
 
     internal class FOServerQuery
     {
-        private string configURL;
         private Logger logger = LogManager.GetLogger("FOServerQuery");
         private List<FOGameInfo> servers;
         private FOServerJson json;
         private FOJsonDeserializer deserializer;
-        private string statusURL;
 
         public FOServerQuery(FOServerJson json)
         {
@@ -41,12 +39,11 @@
             if (status.IsOffline())
             {
                 if (status.Seen != -1)
-                    status.PlayersStr = "Offline - Down for " + Utils.GetReadableTime(Utils.GetCurrentUnixTime() - status.Seen);
+                    status.PlayersStr = string.Format("Offline - Down for {0}", Utils.GetReadableTime(Utils.GetCurrentUnixTime() - status.Seen));
                 else
                     status.PlayersStr = "Offline";
             }
-            else
-                status.PlayersStr = status.Players.ToString();
+            status.PlayersStr = status.Players.ToString();
 
             return status;
         }

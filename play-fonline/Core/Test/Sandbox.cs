@@ -10,6 +10,7 @@
     using System.Windows.Forms;
     using DATLib;
     using Ionic.Zip;
+    using PlayFOnline.Core;
 
     public class Sandbox
     {
@@ -20,11 +21,12 @@
 
         public bool TestInstallReloaded(string game, string tempDir, string installDir)
         {
-            string filename = tempDir + Path.DirectorySeparatorChar + "FOnlineReloaded-Full.zip";
-            frmDownload download = new frmDownload(game, "http://www.fonline-reloaded.net/files/dl_fullclient.php", filename);
-            if (!download.IsDisposed)
-                download.ShowDialog();
-            
+            string filename = Path.Combine(tempDir, "FOnlineReloaded-Full.zip");
+            string url = "http://www.fonline-reloaded.net/files/dl_fullclient.php";
+
+            ProgressDownloader downloader = new ProgressDownloader();
+            downloader.Download(game, url, filename);
+
             if (!File.Exists(filename))
             {
                 MessageBox.Show(filename + " not found after download!");
@@ -32,7 +34,6 @@
             }
 
             ZipFile zip;
-            //zip.ExtractSelectedEntries("*.*", "", installDir, ExtractExistingFileAction.OverwriteSilently)
             try
             {
                 zip = ZipFile.Read(filename);
@@ -68,16 +69,16 @@
             }
 
             File.Delete(filename);
-
             return true;
         }
 
-        public bool TestInstallFode(string tempDir, string installDir)
+        public bool TestInstallFode(string game, string tempDir, string installDir)
         {
-            string filename = tempDir + Path.DirectorySeparatorChar + "FOUpdater.zip";
-            frmDownload download = new frmDownload("FODE", "http://fode.eu/files/download/2-fonline-desert-europe-game-client/", filename);
-            if (!download.IsDisposed)
-                download.ShowDialog();
+            string filename = Path.Combine(tempDir, "FOUpdater.zip");
+            string url = "http://fode.eu/files/download/2-fonline-desert-europe-game-client/";
+
+            ProgressDownloader downloader = new ProgressDownloader();
+            downloader.Download(game, url, filename);
 
             if (!File.Exists(filename))
             {

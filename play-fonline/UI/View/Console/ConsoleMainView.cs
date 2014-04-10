@@ -19,6 +19,8 @@
         public event ItemEventHandler<string> LaunchProgram;
         public event ItemEventHandler<bool> ShowOfflineChanged;
 
+        private List<FOGameInfo> servers;
+
         public bool AskYesNoQuestion(string question, string title)
         {
             throw new NotImplementedException();
@@ -128,7 +130,6 @@
             Console.WriteLine("clear - Clear console buffer.");
             Console.WriteLine("show-offline <true|false> - Toggles display mode.");
             Console.WriteLine("update - Updates status of servers, such as uptime and number of players online.");
-
         }
 
         private void ProcessCommand(string command)

@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Data\FOGameDependency.cs" />
+    <Compile Include="Core\Downloader.cs" />
     <Compile Include="Core\FOServerJson.cs" />
     <Compile Include="Core\FOServerManager.cs" />
     <Compile Include="Core\FOServerQuery.cs" />
@@ -147,11 +148,13 @@
     <Compile Include="Core\Utils\Utils.cs" />
     <Compile Include="Core\Utils\Win32.cs" />
     <Compile Include="UI\GenericEventArgs.cs" />
+    <Compile Include="UI\Presenter\DownloadPresenter.cs" />
     <Compile Include="UI\Presenter\InstallPresenter.cs" />
     <Compile Include="UI\Presenter\MainPresenter.cs" />
     <Compile Include="UI\View\ViewInterfaces.cs" />
     <Compile Include="UI\View\WinForms\WinFormsBaseView.cs" />
     <Compile Include="UI\View\Console\ConsoleMainView.cs" />
+    <Compile Include="UI\View\WinForms\WinFormsDownloadView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsInstallView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsMainView.cs" />
     <EmbeddedResource Include="frmAbout.resx">
