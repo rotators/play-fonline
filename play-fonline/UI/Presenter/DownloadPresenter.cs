@@ -78,17 +78,15 @@ using System.ComponentModel;
             this.view.Close();
         }
 
-        public DownloadPresenter(IDownloadView view, string game, string url, string path)
+        public void Show(string game, string url, string path)
         {
-            this.view = view;
+            this.view.CancelDownload += new EventHandler(OnCancelDownload);
 
-            view.CancelDownload += new EventHandler(OnCancelDownload);
+            this.view.Load();
 
-            view.Load();
+            
 
-            view.Show();
-
-            view.SetTitle("Downloading " + game);
+            this.view.SetTitle("Downloading " + game);
             try
             {
                 this.webClient.Proxy = null;
@@ -98,11 +96,16 @@ using System.ComponentModel;
             }
             catch (UriFormatException ex)
             {
-                view.ShowError(string.Format("{0} is an invalid URL: {1}", url, ex.Message));
-                view.Close();
+                this.view.ShowError(string.Format("{0} is an invalid URL: {1}", url, ex.Message));
+                this.view.Close();
             }
+            this.view.SetDownloadUrl(string.Format(url));
+            this.view.Show();
+        }
 
-            view.SetDownloadUrl(string.Format(url));
+        public DownloadPresenter(IDownloadView view)
+        {
+            this.view = view;
         }
     }
 }

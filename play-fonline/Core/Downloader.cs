@@ -17,7 +17,8 @@
         public void Download(string game, string url, string path)
         {
             IDownloadView view = new WinFormsDownloadView();
-            DownloadPresenter presenter = new DownloadPresenter(view, game, url, path);
+            DownloadPresenter presenter = new DownloadPresenter(view);
+            presenter.Show(game, url, path);
         }
     }
 }
