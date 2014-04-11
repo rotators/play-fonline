@@ -44,6 +44,14 @@
 
         void OnLaunchProgram(object sender, ItemEventArgs<string> program)
         {
+            string path = Path.Combine(this.currentGame.InstallPath, program.Item);
+
+            if (!File.Exists(path))
+            {
+                this.view.ShowError("Can't find " + path);
+                return;
+            }
+
             Process process = new Process();
             process.StartInfo = new ProcessStartInfo(Path.Combine(this.currentGame.InstallPath, program.Item));
             process.Start();
@@ -242,7 +250,7 @@
                 var online = servers.Where(x => !x.Status.IsOffline());
                 this.SetOnlineTitleInfo(online.Sum(x => x.Status.Players), online.Count());
 
-                //this.PingServers(servers.ToList());
+                this.PingServers(servers.ToList());
 
                 this.view.RefreshServerList(servers);
                 
