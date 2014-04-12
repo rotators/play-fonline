@@ -30,7 +30,7 @@
         private FOGameInfo game;
 
         private InstallHandler installHandler;
-        private Logger logger = LogManager.GetLogger("Installer");
+        private Logger logger = LogManager.GetCurrentClassLogger();
         private LogoManager logoManager;
         private string scriptPath;
         private string installPath;

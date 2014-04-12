@@ -4,6 +4,19 @@
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using System.Collections.Generic;
+    using Microsoft.Win32;
+
+    public class NetVersion
+    {
+        public string Name { get; set; }
+        public string RegKeyInstall { get; set; }
+        public string RegKeySP { get; set; }
+        public string RegKeyVersion { get; set; }
+        public bool Installed { get; set; }
+        public string Version { get; set; }
+        public string SP { get; set; }
+    }
 
     public static class Utils
     {
@@ -11,6 +24,99 @@
         {
             Uri uri = new Uri(url);
             return uri.Segments[uri.Segments.Length - 1];
+        }
+
+        private static object GetRegKeyValue(string KeyValuePath)
+        {
+            RegistryKey Key = Registry.LocalMachine.OpenSubKey(KeyValuePath.Remove(KeyValuePath.LastIndexOf('\\'), KeyValuePath.Length - KeyValuePath.LastIndexOf('\\')));
+            if (Key == null) return null;
+            string Value = KeyValuePath.Substring(KeyValuePath.LastIndexOf('\\') + 1, KeyValuePath.Length - (KeyValuePath.LastIndexOf('\\') + 1));
+            return Key.GetValue(Value);
+        }
+
+        public static string GetCLRInfo()
+        {
+            List<NetVersion> Versions = new List<NetVersion>();
+            Versions.Add(new NetVersion()
+            {
+                Name = "1.0",
+                RegKeyInstall = @"Software\Microsoft\.NETFramework\Policy\v1.0\3705",
+                RegKeySP = @"Software\Microsoft\Active Setup\Installed Components\{78705f0d-e8db-4b2d-8193-982bdda15ecd}\Version",
+                RegKeyVersion = @"Software\Microsoft\Active Setup\Installed Components\{78705f0d-e8db-4b2d-8193-982bdda15ecd}\Version"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "1.1",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v1.1.4322\Install",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v1.1.4322\SP",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v1.1.4322"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "2.0",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v2.0.50727\Install",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v2.0.50727\SP",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v2.0.50727\Version"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "3.0",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v3.0\Setup\InstallSuccess",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v3.0\SP",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v3.0\Version"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "3.5",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v3.5\Install",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v3.5\SP",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v3.5\Version"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "4.0 Client Profile",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v4\Client\Install",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v4\Client\Servicing",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v4\Version"
+            });
+
+            Versions.Add(new NetVersion()
+            {
+                Name = "4.0 Full Profile",
+                RegKeyInstall = @"Software\Microsoft\NET Framework Setup\NDP\v4\Full\Install",
+                RegKeySP = @"Software\Microsoft\NET Framework Setup\NDP\v4\Full\Servicing",
+                RegKeyVersion = @"Software\Microsoft\NET Framework Setup\NDP\v4\Version"
+            });
+
+            string Info = "";
+            Info += "OS version: " + Environment.OSVersion.VersionString + (IntPtr.Size == 4 ? " 32-bit" : " 64-bit") + Environment.NewLine;
+            Info += ".NET CLR version: " + Environment.Version + Environment.NewLine;
+
+            if (Directory.Exists(@Environment.GetEnvironmentVariable("windir") + @"\Microsoft.NET\Framework"))
+            {
+                Info += "   .NET installed versions:" + Environment.NewLine;
+
+                foreach (NetVersion version in Versions)
+                {
+                    version.Installed = (GetRegKeyValue(version.RegKeyInstall) != null);
+                    if (!version.Installed)
+                        continue;
+                    version.Version = (string)GetRegKeyValue(version.RegKeyVersion);
+                    try { version.SP = ((int)GetRegKeyValue(version.RegKeySP)).ToString(); }
+                    catch (Exception) { version.SP = (string)GetRegKeyValue(version.RegKeySP).ToString(); }
+                }
+                foreach (NetVersion version in Versions.FindAll(x => x.Installed))
+                {
+                    Info += "       " + version.Name + (version.SP != "0" ? " (SP " + version.SP + ")" : "") + (!String.IsNullOrEmpty(version.Version) ? " - " + version.Version : "") + Environment.NewLine;
+                }
+
+            }
+            return Info;
         }
 
         public static string GetSHA1Checksum(string fileName)

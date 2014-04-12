@@ -6,13 +6,13 @@
     using System.Text;
 
     /// <summary>
-    /// Used for 
+    /// Used to log inside lib-foquery.
     /// </summary>
-    public class LibLogger : FOQuery.ILogger
+    public class NLogWrapper : FOQuery.ILogger
     {
         private NLog.Logger logger;
 
-        public LibLogger(string loggerName)
+        public NLogWrapper(string loggerName)
         {
             logger = NLog.LogManager.GetLogger(loggerName);
         }

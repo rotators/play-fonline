@@ -11,11 +11,13 @@
         public void ShowInfo(string infoMsg)
         {
             MessageBox.Show(infoMsg, "Play FOnline", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            NLog.LogManager.GetCurrentClassLogger().Info(infoMsg);
         }
 
         public void ShowError(string errorMsg)
         {
             MessageBox.Show(errorMsg, "Play FOnline", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            NLog.LogManager.GetCurrentClassLogger().Error(errorMsg);
         }
 
         public string GetFolderPath()

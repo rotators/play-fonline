@@ -17,6 +17,11 @@
         [STAThread]
         public static void Main()
         {
+            NLog.Logger clrLogger = NLog.LogManager.GetLogger("clr-info");
+            clrLogger.Info(Utils.GetCLRInfo());
+
+            SettingsManager.Init();
+
             var view = new WinFormsMainView();
             MainPresenter presenter = new MainPresenter(view, SettingsManager.LoadSettings());
             presenter.StartApplication();

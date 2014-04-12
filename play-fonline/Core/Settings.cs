@@ -46,8 +46,13 @@
 
     internal static class SettingsManager
     {
-        public static Logger logger = LogManager.GetLogger("SettingsManager");
+        public static Logger logger;
         public static readonly string SettingsPath = Path.Combine(Environment.CurrentDirectory, "settings.json");
+
+        public static void Init()
+        {
+            logger = LogManager.GetCurrentClassLogger();
+        }
 
         public static FOSettings LoadSettings()
         {

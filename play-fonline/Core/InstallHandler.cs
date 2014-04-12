@@ -13,7 +13,7 @@
         private Dictionary<string, FOGameInstallInfo> installInfo;
         private List<InstalledGame> installedGames { get; set; }
         private List<FOGameDependency> dependencies { get; set; }
-        private NLog.Logger logger = NLog.LogManager.GetLogger("InstallHandler");
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private string installError;
 
@@ -52,16 +52,20 @@
 
         public bool VerifyGameFolderPath(string gameId, string path)
         {
+            this.logger.Debug("Verifying path {0} for {1}.", gameId, path);
             if (!this.installInfo.ContainsKey(gameId))
             {
-                this.logger.Error("No install data available for " + gameId);
+                this.logger.Error("No install data available for {0}", gameId);
                 return false;
             }
 
             foreach (string file in this.installInfo[gameId].Files)
             {
                 if (!File.Exists(path + "/" + file))
+                {
+                    this.logger.Error("File {0} for {1} not found. Invalid installation.", file, gameId);
                     return false;
+                }
             }
             return true;
         }
@@ -85,12 +89,12 @@
             return this.dependencies.Exists(x => x.Name == name);
         }
 
-        private bool DownloadInstallScript(string url, string localPath)
+        private void DownloadInstallScript(string url, string localPath)
         {
+            this.logger.Info("Downloading {0} to {1}", url, localPath);
             WebClient webClient = new WebClient();
-            webClient.Proxy = null;
             webClient.DownloadFile(url, localPath);
-            return true;
+            this.logger.Info("File downloaded.");
         }
 
         public bool InstallGame(FOGameInfo game, string scriptPath, string tempPath, string installPath, List<string> dependencyPaths)
@@ -113,8 +117,8 @@
             }
             else
             {
-                if (!this.DownloadInstallScript(installScriptInfo.Url, localScriptPath))
-                    return false;
+                this.logger.Info("{0} doesn't exist", localScriptPath);
+                this.DownloadInstallScript(installScriptInfo.Url, localScriptPath);
             }
 
             if (!File.Exists(localScriptPath))
@@ -123,6 +127,7 @@
                 return false;
             }
 
+            this.logger.Debug("Running install script for {0}, temp path: {1}, install path: {2}", game.Name, tempPath, installPath);
             InstallHost installHost = new InstallHost();
             installHost.RunInstallScript(localScriptPath, game.Name, tempPath, installPath);
 
@@ -141,7 +146,7 @@
                 File.Copy(path, destPath);
                 this.logger.Info("Copied {0} to {1}", path, destPath);
             }
-
+            this.logger.Info("Adding installed game {0}, path {1}", game.Id, installPath);
             this.AddInstalledGame(game.Id, installPath);
 
             return true;

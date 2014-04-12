@@ -61,11 +61,11 @@
         event ItemEventHandler<string> LaunchProgram;
         event ItemEventHandler<bool> ShowOfflineChanged;
 
-        bool AskYesNoQuestion(string question, string title);
-        string GetFolderPath();
+        new bool AskYesNoQuestion(string question, string title);
+        new string GetFolderPath();
 
-        void ShowError(string errorMsg);
-        void ShowInfo(string infoMsg);
+        new void ShowError(string errorMsg);
+        new void ShowInfo(string infoMsg);
         void RefreshServerList(List<FOGameInfo> servers);
 
         void UpdateStatusBar(string text);

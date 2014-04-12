@@ -7,12 +7,13 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using NLog;
+    using PlayFOnline.Core;
     using FOQuery.Data;
     using FOQuery.Json;
 
     public class LogoManager
     {
-        private Logger logger = LogManager.GetLogger("LogoManager");
+        private Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, FOLogoInfo> logoInfo;
         private string logoInfoFile = Environment.CurrentDirectory + "\\logos.json";
 
@@ -44,7 +45,7 @@
         }
         public void Update(string savePath, string logoUrl)
         {
-            JsonFetcher jsonFetcher = new JsonFetcher();
+            JsonFetcher jsonFetcher = new JsonFetcher(new NLogWrapper("FOQuery"));
             JObject o = jsonFetcher.DownloadJson(logoUrl);
 
             foreach (JToken serverName in o["fonline"]["logo"].Children())

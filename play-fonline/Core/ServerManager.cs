@@ -15,7 +15,7 @@
 
         public ServerManager(FOServerJson foServerJson, InstallHandler installHandler)
         {
-            this.query = new FOServerQuery(foServerJson);
+            this.query = new FOServerQuery(foServerJson, new NLogWrapper("FOQuery"));
             this.installHandler = installHandler;
         }
 

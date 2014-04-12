@@ -106,7 +106,7 @@
   <ItemGroup>
     <Compile Include="Core\Downloader.cs" />
     <Compile Include="Core\ServerManager.cs" />
-    <Compile Include="Core\SimpleLogger.cs" />
+    <Compile Include="Core\NLogWrapper.cs" />
     <Compile Include="Forms\frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>

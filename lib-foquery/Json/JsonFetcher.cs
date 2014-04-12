@@ -9,7 +9,12 @@
     {
         private JsonReaderException jsonException;
         private WebException webException;
-        //private Logger logger = LogManager.GetLogger("JsonFetcher");
+        private ILogger logger;
+
+        public JsonFetcher(ILogger logger)
+        {
+            this.logger = logger;
+        }
 
         public JObject DownloadJson(string url)
         {

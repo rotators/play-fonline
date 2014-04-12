@@ -13,28 +13,28 @@
         string statusUrl;
         string combinedUrl;
 
-        public FOServerJson(string configUrl, string statusUrl, string combinedUrl)
+        JsonFetcher jsonFetch;
+
+        public FOServerJson(string configUrl, string statusUrl, string combinedUrl, ILogger logger)
         {
             this.configUrl = configUrl;
             this.statusUrl = statusUrl;
             this.combinedUrl = combinedUrl;
+            jsonFetch = new JsonFetcher(logger);
         }
 
         public JObject GetStatus()
         {
-            JsonFetcher jsonFetch = new JsonFetcher();
             return jsonFetch.DownloadJson(this.statusUrl);
         }
         
         public JObject GetConfig()
         {
-            JsonFetcher jsonFetch = new JsonFetcher();
             return jsonFetch.DownloadJson(this.configUrl);
         }
 
         public JObject GetCombined()
         {
-            JsonFetcher jsonFetch = new JsonFetcher();
             return jsonFetch.DownloadJson(this.combinedUrl);
         }
     }

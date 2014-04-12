@@ -12,12 +12,14 @@
     public class FOServerQuery
     {
         //private Logger logger = LogManager.GetLogger("FOServerQuery");
+        private ILogger logger;
         private List<FOGameInfo> servers;
         private FOServerJson json;
         private FOJsonDeserializer deserializer;
 
-        public FOServerQuery(FOServerJson json)
+        public FOServerQuery(FOServerJson json, ILogger logger)
         {
+            this.logger = logger;
             this.json = json;
             this.deserializer = new FOJsonDeserializer();
             this.Update();
@@ -68,6 +70,7 @@
             JObject data = json.GetStatus();
             foreach(var server in this.servers)
             {
+                logger.Debug("Updating status for {0} ({1})", server.Name, server.Id);
                 server.Status = this.deserializer.GetServerStatus(data, server.Id);
                 server.Status = ProcessStatus(server.Status);
             }

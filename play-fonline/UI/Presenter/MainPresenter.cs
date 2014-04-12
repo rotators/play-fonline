@@ -13,6 +13,7 @@
     using FOQuery.Json;
     using PlayFOnline.Core;
     using PlayFOnline.UI.View;
+    using NLog;
     
 
     public interface IMainPresenter
@@ -34,6 +35,8 @@
         private FOSettings settings;
         private FOGameInfo currentGame;
 
+        private NLog.Logger logger = LogManager.GetCurrentClassLogger();
+
         void OnRefreshServers(object sender, EventArgs e)
         {
             this.UpdateGameList();
@@ -42,6 +45,7 @@
         void OnFoDevLinkClick(object sender, EventArgs e)
         {
             Process.Start("http://fodev.net");
+            logger.Debug("Clicked fodev.net link.");
         }
 
         void OnLaunchProgram(object sender, ItemEventArgs<string> program)
@@ -54,9 +58,11 @@
                 return;
             }
 
+            logger.Debug("Starting {0}.", path);
             Process process = new Process();
-            process.StartInfo = new ProcessStartInfo(Path.Combine(this.currentGame.InstallPath, program.Item));
+            process.StartInfo = new ProcessStartInfo(path);
             process.Start();
+            logger.Debug("Started {0}.", path);
         }
 
         void OnShowOfflineChanged(object sender, ItemEventArgs<bool> mode)
@@ -67,6 +73,8 @@
 
         void OnInstallGame(object sender, FOGameInfo game)
         {
+            if (game == null) return;
+
             this.AddGame(game);
         }
 
@@ -101,6 +109,8 @@
             this.view.Load();
             this.view.SetTitle(this.GetBaseTitle());
 
+            this.logger.Info("Starting {0}", GetBaseTitle());
+
             if (this.settings == null)
             {
                 this.view.ShowError("Unable to load settings!");
@@ -114,6 +124,7 @@
 
             if (this.settings.Paths == null)
             {
+                this.logger.Info("Paths not found, setting default paths.");
                 string baseDir = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
                 this.settings.Paths = new PathSettings();
                 this.settings.Paths.Scripts      = Path.Combine(baseDir, "scripts");
@@ -123,14 +134,14 @@
 
             WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
 
-            JsonFetcher jsonFetch = new JsonFetcher();
+            JsonFetcher jsonFetch = new JsonFetcher(new NLogWrapper("FOQuery"));
             FOJsonDeserializer jsonDeserialize = new FOJsonDeserializer();
 
             var jsonNode = jsonFetch.DownloadJson(this.settings.InstallUrl);
             this.installHandler = new InstallHandler(jsonDeserialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
             this.logoManager = new LogoManager(this.settings.Paths.Logos, "http://fodev.net/status/json/logo/");
             this.serverManager = new ServerManager(
-                new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl), 
+                new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl, new NLogWrapper("FOQuery")), 
                 this.installHandler);
 
             this.UpdateGameList();
