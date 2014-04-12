@@ -44,6 +44,15 @@
                 return string.Empty;
             };
 
+            this.Main.olvPlayers.AspectToStringConverter = delegate(object x)
+            {
+                FOGameStatus status = (FOGameStatus)x;
+                if (status.IsOffline())
+                    return status.PlayersStr;
+                else
+                    return status.Players.ToString();
+            };
+
             this.Main.btnRefresh.Click += RefreshServers;
             this.Main.chkShowOffline.CheckedChanged += new EventHandler(chkShowOffline_CheckedChanged);
             this.Main.linkFoDev.Click += FoDevLinkClicked;

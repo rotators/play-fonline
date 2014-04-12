@@ -63,7 +63,7 @@
         public string Name { get; set; }
     }
 
-    public class FOGameStatus
+    public class FOGameStatus : IComparable
     {
         public FOGameStatus()    { this.Latency = int.MaxValue; }
 
@@ -72,6 +72,20 @@
         public int Seen          { get; set; }
         public bool IsOffline()  { return this.Players == -1; }
         public int Latency       { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+
+            FOGameStatus other = obj as FOGameStatus;
+            if (other.IsOffline()) return 1;
+            else if (this.IsOffline() && other.IsOffline()) return 0;
+            else
+            {
+                if (this.IsOffline()) return -1;
+                return this.Players.CompareTo(other.Players);
+            }
+        }
     }
 
     public class FOLogoInfo

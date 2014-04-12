@@ -147,25 +147,26 @@
             // olvName
             // 
             this.olvName.AspectName = "Name";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Name";
+            this.olvName.Width = 100;
             // 
             // olvPlayers
             // 
-            this.olvPlayers.AspectName = "Status.PlayersStr";
+            this.olvPlayers.AspectName = "Status";
             this.olvPlayers.Text = "Players";
             // 
             // olvColumn2
             // 
             this.olvColumn2.AspectName = "Website";
-            this.olvColumn2.FillsFreeSpace = true;
             this.olvColumn2.Hyperlink = true;
             this.olvColumn2.Text = "Website";
+            this.olvColumn2.Width = 120;
             // 
             // olvColumn3
             // 
             this.olvColumn3.AspectName = "Host";
             this.olvColumn3.Text = "Host";
+            this.olvColumn3.Width = 120;
             // 
             // olvColumn4
             // 

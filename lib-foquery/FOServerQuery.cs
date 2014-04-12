@@ -60,7 +60,8 @@
                 else
                     status.PlayersStr = "Offline";
             }
-            status.PlayersStr = status.Players.ToString();
+            else
+                status.PlayersStr = status.Players.ToString();
 
             return status;
         }
