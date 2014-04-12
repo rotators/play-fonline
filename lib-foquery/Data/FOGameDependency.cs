@@ -1,4 +1,4 @@
-﻿namespace PlayFOnline.Data
+﻿namespace FOQuery.Data
 {
     /// <summary>
     /// Fallout .dat files and so on not supplied with game.

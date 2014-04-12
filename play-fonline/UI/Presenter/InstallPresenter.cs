@@ -7,7 +7,7 @@
     using System.Text;
     using System.Net;
     using NLog;
-    using PlayFOnline.Data;
+    using FOQuery.Data;
     using PlayFOnline.UI.View;
     using PlayFOnline.Scripts;
 

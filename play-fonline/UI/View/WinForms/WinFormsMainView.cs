@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using PlayFOnline.Data;
+    using FOQuery.Data;
     using PlayFOnline.Core;
     using System.Windows.Forms;
     using System.Drawing;

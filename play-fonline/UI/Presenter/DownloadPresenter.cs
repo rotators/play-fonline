@@ -84,8 +84,6 @@ using System.ComponentModel;
 
             this.view.Load();
 
-            
-
             this.view.SetTitle("Downloading " + game);
             try
             {

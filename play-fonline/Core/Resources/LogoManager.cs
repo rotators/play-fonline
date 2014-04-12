@@ -7,7 +7,8 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using NLog;
-    using PlayFOnline.Data;
+    using FOQuery.Data;
+    using FOQuery.Json;
 
     public class LogoManager
     {

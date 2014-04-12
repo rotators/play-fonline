@@ -1,4 +1,4 @@
-﻿namespace PlayFOnline.Data
+﻿namespace FOQuery.Data
 {
     using System;
     using System.Collections.Generic;

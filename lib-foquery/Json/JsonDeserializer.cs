@@ -1,11 +1,11 @@
-﻿namespace PlayFOnline.Core.Resources
+﻿namespace FOQuery.Json
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using FOQuery.Data;
     using Newtonsoft.Json;
-    using PlayFOnline.Data;
     using Newtonsoft.Json.Linq;
 
     /// <summary>

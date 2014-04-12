@@ -1,17 +1,17 @@
-﻿namespace PlayFOnline.Core
+﻿namespace FOQuery
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using NLog;
-    using PlayFOnline.Data;
-    using PlayFOnline.Core.Resources;
+    using FOQuery;
+    using FOQuery.Data;
+    using FOQuery.Json;
 
-    internal class FOServerQuery
+    public class FOServerQuery
     {
-        private Logger logger = LogManager.GetLogger("FOServerQuery");
+        //private Logger logger = LogManager.GetLogger("FOServerQuery");
         private List<FOGameInfo> servers;
         private FOServerJson json;
         private FOJsonDeserializer deserializer;
@@ -34,12 +34,27 @@
             return this.servers;
         }
 
+        private string GetReadableTime(int seconds)
+        {
+            TimeSpan t = TimeSpan.FromSeconds(seconds);
+            if (t.Days > 0) return t.Days + " days";
+            if (t.Hours > 0) return t.Hours + " hours";
+            if (t.Minutes > 0) return t.Minutes + " minutes";
+            return seconds + " seconds";
+        }
+
+        private int GetCurrentUnixTime()
+        {
+            int unixTimestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            return unixTimestamp;
+        }
+
         private FOGameStatus ProcessStatus(FOGameStatus status)
         {
             if (status.IsOffline())
             {
                 if (status.Seen != -1)
-                    status.PlayersStr = string.Format("Offline - Down for {0}", Utils.GetReadableTime(Utils.GetCurrentUnixTime() - status.Seen));
+                    status.PlayersStr = string.Format("Offline - Down for {0}", this.GetReadableTime(this.GetCurrentUnixTime() - status.Seen));
                 else
                     status.PlayersStr = "Offline";
             }

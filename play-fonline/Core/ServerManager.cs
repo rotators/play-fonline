@@ -5,14 +5,15 @@
     using System.Linq;
     using System.Text;
 
-    using PlayFOnline.Data;
+    using FOQuery.Data;
+    using FOQuery;
 
-    public class FOServerManager
+    public class ServerManager
     {
         FOServerQuery query;
         InstallHandler installHandler;
 
-        public FOServerManager(FOServerJson foServerJson, InstallHandler installHandler)
+        public ServerManager(FOServerJson foServerJson, InstallHandler installHandler)
         {
             this.query = new FOServerQuery(foServerJson);
             this.installHandler = installHandler;

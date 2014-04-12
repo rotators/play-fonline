@@ -104,39 +104,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Data\FOGameDependency.cs" />
     <Compile Include="Core\Downloader.cs" />
-    <Compile Include="Core\FOServerJson.cs" />
-    <Compile Include="Core\FOServerManager.cs" />
-    <Compile Include="Core\FOServerQuery.cs" />
-    <Compile Include="Core\Data\FOGameInfo.cs" />
-    <Compile Include="Core\Resources\JsonDeserializer.cs" />
-    <Compile Include="frmAbout.cs">
+    <Compile Include="Core\ServerManager.cs" />
+    <Compile Include="Core\SimpleLogger.cs" />
+    <Compile Include="Forms\frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmAbout.Designer.cs">
+    <Compile Include="Forms\frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmDownload.cs">
+    <Compile Include="Forms\frmDownload.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmDownload.designer.cs">
+    <Compile Include="Forms\frmDownload.designer.cs">
       <DependentUpon>frmDownload.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmInstallMain.cs">
+    <Compile Include="Forms\frmInstallMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmInstallMain.Designer.cs">
+    <Compile Include="Forms\frmInstallMain.Designer.cs">
       <DependentUpon>frmInstallMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmMain.cs">
+    <Compile Include="Forms\frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmMain.Designer.cs">
+    <Compile Include="Forms\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Data\InstallHandler.cs" />
-    <Compile Include="Core\Resources\JsonFetcher.cs" />
+    <Compile Include="Core\InstallHandler.cs" />
     <Compile Include="Core\Resources\LogoManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -157,16 +152,16 @@
     <Compile Include="UI\View\WinForms\WinFormsDownloadView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsInstallView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsMainView.cs" />
-    <EmbeddedResource Include="frmAbout.resx">
+    <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmDownload.resx">
+    <EmbeddedResource Include="Forms\frmDownload.resx">
       <DependentUpon>frmDownload.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmInstallMain.resx">
+    <EmbeddedResource Include="Forms\frmInstallMain.resx">
       <DependentUpon>frmInstallMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmMain.resx">
+    <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -217,6 +212,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib-foquery\lib-foquery.csproj">
+      <Project>{3FAECC99-1295-4DDE-8898-6FA6F1FDEE98}</Project>
+      <Name>lib-foquery</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

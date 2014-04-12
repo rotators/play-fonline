@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using Newtonsoft.Json;
-    using PlayFOnline.Data;
+    using FOQuery.Data;
     using NLog;
 
     public class FOSettings

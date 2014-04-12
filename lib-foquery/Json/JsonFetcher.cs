@@ -1,15 +1,15 @@
-﻿namespace PlayFOnline
+﻿namespace FOQuery.Json
 {
     using System.Net;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using NLog;
+    //using NLog;
 
-    internal class JsonFetcher
+    public class JsonFetcher
     {
         private JsonReaderException jsonException;
         private WebException webException;
-        private Logger logger = LogManager.GetLogger("JsonFetcher");
+        //private Logger logger = LogManager.GetLogger("JsonFetcher");
 
         public JObject DownloadJson(string url)
         {
@@ -23,14 +23,14 @@
             using (var webClient = new System.Net.WebClient())
             {
                 webClient.Proxy = null;
-                this.logger.Info("Downloading JSON from {0}", url);
+                //this.logger.Info("Downloading JSON from {0}", url);
                 try
                 {
                     jsonContent = webClient.DownloadString(url);
                 }
                 catch (WebException e)
                 {
-                    this.logger.Error("Failed to download {0}: {1}", url, e.Message);
+                    //this.logger.Error("Failed to download {0}: {1}", url, e.Message);
                     this.webException = e;
                     return string.Empty;
                 }
@@ -46,7 +46,7 @@
             }
             catch (JsonReaderException e)
             {
-                this.logger.Error("Failed to parse {0}: {1}", json, e.Message);
+                //this.logger.Error("Failed to parse {0}: {1}", json, e.Message);
                 this.jsonException = e;
             }
             return null;

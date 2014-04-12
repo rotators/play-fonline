@@ -7,7 +7,7 @@
     using System.Windows.Forms;
     using System.Drawing;
     using PlayFOnline.UI.Presenter;
-    using PlayFOnline.Data;
+    using FOQuery.Data;
 
     /// <summary>
     /// TODO: Update summary.

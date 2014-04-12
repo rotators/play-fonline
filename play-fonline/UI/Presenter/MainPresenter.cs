@@ -4,14 +4,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using PlayFOnline.Core;
-    using PlayFOnline.UI.View;
     using System.Net;
     using System.IO;
     using System.Reflection;
-    using PlayFOnline.Core.Resources;
-    using PlayFOnline.Data;
     using System.Diagnostics;
+    using FOQuery;
+    using FOQuery.Data;
+    using FOQuery.Json;
+    using PlayFOnline.Core;
+    using PlayFOnline.UI.View;
+    
 
     public interface IMainPresenter
     {
@@ -26,7 +28,7 @@
         IMainView view;
         bool showOffline;
 
-        private FOServerManager serverManager;
+        private ServerManager serverManager;
         private LogoManager logoManager;
         private InstallHandler installHandler;
         private FOSettings settings;
@@ -127,7 +129,7 @@
             var jsonNode = jsonFetch.DownloadJson(this.settings.InstallUrl);
             this.installHandler = new InstallHandler(jsonDeserialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
             this.logoManager = new LogoManager(this.settings.Paths.Logos, "http://fodev.net/status/json/logo/");
-            this.serverManager = new FOServerManager(
+            this.serverManager = new ServerManager(
                 new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl), 
                 this.installHandler);
 
@@ -240,9 +242,6 @@
             this.view.UpdateStatusBar("Updating gamelist...");
             try
             {
-                //var servers = this.GetServers();
-                //servers.Where(x => this.settings.IsInstalled(x.Id)).ToList().ForEach(x => x.InstallPath = this.settings.GetInstallPath(x.Id));
-
                 serverManager.UpdateStatus();
 
                 var servers = serverManager.GetServers(!this.showOffline);
