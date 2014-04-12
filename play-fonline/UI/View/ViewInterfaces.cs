@@ -42,6 +42,7 @@
         void Show();
         void Load();
 
+        bool ReviewCode();
         void SetTitle(string text);
         void SetLogo(string fileName);
         void SetSetupText(string text);

@@ -84,8 +84,7 @@
 
         public void ClearGameSelection()
         {
-           // this.Main.btnInstall.Enabled = !installed;
-           // this.Main.btnOptions.Enabled = installed;
+            this.Main.btnInstall.Enabled = true;
 
             var controls = this.Main.flowMenu.Controls;
 

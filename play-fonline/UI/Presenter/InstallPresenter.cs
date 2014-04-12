@@ -10,6 +10,7 @@
     using FOQuery.Data;
     using PlayFOnline.UI.View;
     using PlayFOnline.Scripts;
+    using PlayFOnline.Forms;
 
     public enum SetupStep
     {
@@ -126,12 +127,13 @@
             }
             else if (step == SetupStep.InstallPreview)
             {
-                this.view.SetSetupText("You are now ready to install. If you want to review the script that will be run, please do so now.");
+                this.view.SetSetupText("You are now ready to install. If you want to review that the install script is not malicious, check that option below.");
             }
             else if (step == SetupStep.Install)
             {
+
                 this.view.Close();
-                if (!this.installHandler.InstallGame(this.game, this.scriptPath, this.tempPath, this.installPath, selectedDependencies.Values.ToList()))
+                if (!this.installHandler.InstallGame(this.game, this.scriptPath, this.tempPath, this.installPath, selectedDependencies.Values.ToList(), this.view.ReviewCode()))
                 {
                     this.view.ShowError(this.installHandler.GetInstallError());
                     this.IsSuccess = false;

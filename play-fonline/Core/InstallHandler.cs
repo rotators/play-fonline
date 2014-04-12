@@ -6,6 +6,7 @@
     using FOQuery.Data;
     using PlayFOnline.Core;
     using PlayFOnline.Scripts;
+    using PlayFOnline.Forms;
     using System.Net;
 
     public class InstallHandler
@@ -97,7 +98,7 @@
             this.logger.Info("File downloaded.");
         }
 
-        public bool InstallGame(FOGameInfo game, string scriptPath, string tempPath, string installPath, List<string> dependencyPaths)
+        public bool InstallGame(FOGameInfo game, string scriptPath, string tempPath, string installPath, List<string> dependencyPaths, bool reviewCode)
         {
             // Fetch and run install script
             FOScriptInfo installScriptInfo = this.GetInstallScriptInfo(game.Id);
@@ -127,9 +128,26 @@
                 return false;
             }
 
+            if (reviewCode)
+            {
+                string[] code = File.ReadAllLines(localScriptPath);
+                frmReviewCode review = new frmReviewCode(string.Join("\r\n",code));
+                review.ShowDialog();
+                if (review.Cancelled)
+                {
+                    this.installError = "Cancelled during script review.";
+                    return false;
+                }
+            }
+
+
             this.logger.Debug("Running install script for {0}, temp path: {1}, install path: {2}", game.Name, tempPath, installPath);
             InstallHost installHost = new InstallHost();
-            installHost.RunInstallScript(localScriptPath, game.Name, tempPath, installPath);
+            if (!installHost.RunInstallScript(localScriptPath, game.Name, tempPath, installPath))
+            {
+                this.logger.Error("Installation failed.");
+                return false;
+            }
 
             // Copy dependencies
             foreach (string path in dependencyPaths)

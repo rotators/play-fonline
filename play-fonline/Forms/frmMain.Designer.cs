@@ -8,7 +8,6 @@
         private System.ComponentModel.IContainer components = null;
 
         public System.Windows.Forms.FlowLayoutPanel flowMenu;
-        public System.Windows.Forms.Button btnOptions;
         public System.Windows.Forms.Button btnInstall;
         public System.Windows.Forms.CheckBox chkShowOffline;
         public BrightIdeasSoftware.ObjectListView lstGames;
@@ -50,7 +49,6 @@
             this.components = new System.ComponentModel.Container();
             this.flowMenu = new System.Windows.Forms.FlowLayoutPanel();
             this.btnInstall = new System.Windows.Forms.Button();
-            this.btnOptions = new System.Windows.Forms.Button();
             this.chkShowOffline = new System.Windows.Forms.CheckBox();
             this.lstGames = new BrightIdeasSoftware.ObjectListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -75,7 +73,6 @@
             // flowMenu
             // 
             this.flowMenu.Controls.Add(this.btnInstall);
-            this.flowMenu.Controls.Add(this.btnOptions);
             this.flowMenu.Location = new System.Drawing.Point(5, 12);
             this.flowMenu.Name = "flowMenu";
             this.flowMenu.Size = new System.Drawing.Size(119, 389);
@@ -83,22 +80,13 @@
             // 
             // btnInstall
             // 
+            this.btnInstall.Enabled = false;
             this.btnInstall.Location = new System.Drawing.Point(3, 3);
             this.btnInstall.Name = "btnInstall";
             this.btnInstall.Size = new System.Drawing.Size(103, 28);
             this.btnInstall.TabIndex = 8;
             this.btnInstall.Text = "Install/Add";
             this.btnInstall.UseVisualStyleBackColor = true;
-            // 
-            // btnOptions
-            // 
-            this.btnOptions.Enabled = false;
-            this.btnOptions.Location = new System.Drawing.Point(3, 37);
-            this.btnOptions.Name = "btnOptions";
-            this.btnOptions.Size = new System.Drawing.Size(103, 28);
-            this.btnOptions.TabIndex = 6;
-            this.btnOptions.Text = "Options";
-            this.btnOptions.UseVisualStyleBackColor = true;
             // 
             // chkShowOffline
             // 

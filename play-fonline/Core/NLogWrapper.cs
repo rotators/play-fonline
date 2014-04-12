@@ -32,6 +32,11 @@
             logger.Fatal(message, args);
         }
 
+        public void Info(string message, params object[] args)
+        {
+            logger.Info(message, args);
+        }
+
         public void Trace(string message, params object[] args)
         {
             logger.Trace(message, args);

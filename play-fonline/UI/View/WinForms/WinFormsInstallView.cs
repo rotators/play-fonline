@@ -144,6 +144,8 @@
                 foreach (Control ctrl in this.setupControls[currentStep])
                     this.Form.flowArea.Controls.Remove(ctrl);
 
+            this.Form.chkReviewCode.Visible = false;
+
             if (step == SetupStep.SelectPath)
             {
                 this.Form.btnBack.Enabled = false;
@@ -166,11 +168,17 @@
             else if (step == SetupStep.InstallPreview)
             {
                 this.Form.btnNext.Text = "Install";
+                this.Form.chkReviewCode.Visible = true;
             }
 
             if (this.setupControls.ContainsKey(step))
                 foreach (Control ctrl in this.setupControls[step])
                     this.Form.flowArea.Controls.Add(ctrl);
+        }
+        
+        public bool ReviewCode()
+        {
+            return this.Form.chkReviewCode.Checked;
         }
 
         public void SetTitle(string text)

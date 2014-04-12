@@ -49,13 +49,22 @@
                 if (entry.FileName != "FOnline Reloaded/")
                 {
                     entry.FileName = entry.FileName.Replace("FOnline Reloaded/", string.Empty);
-                    entry.Extract(installDir);
+                    entry.Extract(installDir, ExtractExistingFileAction.OverwriteSilently);
                 }
             });
+            zip.Dispose();
+
+            string updater = Path.Combine(installDir, "Updater.exe");
 
             ProcessStartInfo procInfo = new ProcessStartInfo();
             procInfo.WorkingDirectory = installDir;
-            procInfo.FileName = installDir + "\\" + "Updater.exe";
+            procInfo.FileName = updater;
+            if (!File.Exists(updater))
+            {
+                MessageBox.Show("{0} not found, can't update!", updater);
+                return false;
+            }
+
             Process proc = Process.Start(procInfo);
             while (!proc.HasExited)
             {
@@ -67,8 +76,14 @@
                 if (Win32.WindowContainsTextString(proc.MainWindowHandle, "Checking end."))
                     proc.Kill();
             }
-
-            File.Delete(filename);
+            try
+            {
+                File.Delete(filename);
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(string.Format("Error when deleting {0}: {1}", filename, ex.Message));
+            }
             return true;
         }
 

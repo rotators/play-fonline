@@ -19,6 +19,7 @@
         public System.Windows.Forms.TextBox txtGameInfo;
         public System.Windows.Forms.FlowLayoutPanel flowArea;
         public System.Windows.Forms.Label lblSetupText;
+        public System.Windows.Forms.CheckBox chkReviewCode;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -43,8 +44,8 @@
         {
             this.panelInfo = new System.Windows.Forms.Panel();
             this.txtGameInfo = new System.Windows.Forms.TextBox();
-            this.lblSeperator = new System.Windows.Forms.Label();
             this.pctGameLogo = new System.Windows.Forms.PictureBox();
+            this.lblSeperator = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -53,6 +54,7 @@
             this.lblSpaceRequired = new System.Windows.Forms.Label();
             this.flowArea = new System.Windows.Forms.FlowLayoutPanel();
             this.lblSetupText = new System.Windows.Forms.Label();
+            this.chkReviewCode = new System.Windows.Forms.CheckBox();
             this.panelInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctGameLogo)).BeginInit();
             this.panel1.SuspendLayout();
@@ -80,14 +82,6 @@
             this.txtGameInfo.TabIndex = 9;
             this.txtGameInfo.Text = "[Game Text]";
             // 
-            // lblSeperator
-            // 
-            this.lblSeperator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblSeperator.Location = new System.Drawing.Point(0, 100);
-            this.lblSeperator.Name = "lblSeperator";
-            this.lblSeperator.Size = new System.Drawing.Size(555, 2);
-            this.lblSeperator.TabIndex = 8;
-            // 
             // pctGameLogo
             // 
             this.pctGameLogo.Dock = System.Windows.Forms.DockStyle.Left;
@@ -97,6 +91,14 @@
             this.pctGameLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pctGameLogo.TabIndex = 1;
             this.pctGameLogo.TabStop = false;
+            // 
+            // lblSeperator
+            // 
+            this.lblSeperator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblSeperator.Location = new System.Drawing.Point(0, 100);
+            this.lblSeperator.Name = "lblSeperator";
+            this.lblSeperator.Size = new System.Drawing.Size(555, 2);
+            this.lblSeperator.TabIndex = 8;
             // 
             // panel1
             // 
@@ -173,11 +175,23 @@
             this.lblSetupText.TabIndex = 9;
             this.lblSetupText.Text = "[Setup Text]";
             // 
+            // chkReviewCode
+            // 
+            this.chkReviewCode.AutoSize = true;
+            this.chkReviewCode.Location = new System.Drawing.Point(13, 139);
+            this.chkReviewCode.Name = "chkReviewCode";
+            this.chkReviewCode.Size = new System.Drawing.Size(116, 17);
+            this.chkReviewCode.TabIndex = 10;
+            this.chkReviewCode.Text = "Review Scriptcode";
+            this.chkReviewCode.UseVisualStyleBackColor = true;
+            this.chkReviewCode.Visible = false;
+            // 
             // frmInstallMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(555, 320);
+            this.Controls.Add(this.chkReviewCode);
             this.Controls.Add(this.lblSeperator);
             this.Controls.Add(this.lblSetupText);
             this.Controls.Add(this.flowArea);
@@ -200,6 +214,8 @@
         }
 
         #endregion
+
+        
 
     }
 }
