@@ -145,6 +145,7 @@
                 this.installHandler);
 
             this.UpdateGameList();
+            this.VerifyInstalledGames();
 
             this.view.StartApplication();
         }
@@ -153,7 +154,10 @@
         {
             if (!this.installHandler.HasInstallInfo(game.Id))
             {
-                this.view.ShowError("No install info available for " + game.Name + " :(" + Environment.NewLine + "Please report this, so that it can be implemented.");
+                this.view.ShowError(string.Format("No install info available for {0} :( {1} If you want to install this game anyway, navigate to the webpage ({2}) instead.",
+                    game.Name,
+                    Environment.NewLine,
+                    game.Website));
                 return false;
             }
 
@@ -191,8 +195,7 @@
                 string msg = "Successfully installed " + game.Name + "!";
                 this.view.ShowInfo(msg);
             }
-            this.settings.Games = this.installHandler.GetInstalledGames();
-            SettingsManager.SaveSettings(this.settings);
+            SaveInstalledStatus();
             return true;
         }
 
@@ -246,6 +249,52 @@
                 this.view.SelectGame(game, programs);
             }
             this.currentGame = game;
+        }
+
+        private void SaveInstalledStatus()
+        {
+            this.settings.Games = this.installHandler.GetInstalledGames();
+            SettingsManager.SaveSettings(this.settings);
+        }
+
+        public void VerifyInstalledGames()
+        {
+            List<FOGameInfo> servers = this.serverManager.GetServers(false);
+            List<InstalledGame> removeGames = new List<InstalledGame>();
+            foreach (InstalledGame installGame in this.installHandler.GetInstalledGames())
+            {
+                if(installGame.IgnoreInvalid)
+                    continue;
+
+                FOGameInfo game = servers.Where(x => x.Id == installGame.Id).FirstOrDefault();
+
+                string installPath = installHandler.GetInstallPath(game.Id);
+                foreach(string file in installHandler.GetGameFiles(game.Id))
+                {
+                    string filePath = Path.Combine(installGame.Path, file);
+
+                    if(!File.Exists(filePath))
+                    {
+                        if (this.view.AskYesNoQuestion(string.Format("Unable to find {0} for {1}, remove {1}?", filePath, game.Name), "Remove game?"))
+                        {
+                            removeGames.Add(installGame);
+                        }
+                        else
+                        {
+                            installGame.IgnoreInvalid = true;
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+            foreach (var game in removeGames)
+            {
+                this.installHandler.RemoveInstalledGame(game.Id);
+            }
+
+            SaveInstalledStatus();
+            this.view.RefreshServerList(serverManager.GetServers(!this.showOffline));
         }
 
         public void UpdateGameList()

@@ -46,6 +46,11 @@
             return this.installInfo[gameId].LaunchPrograms;
         }
 
+        public List<string> GetGameFiles(string gameId)
+        {
+            return this.installInfo[gameId].Files;
+        }
+
         public bool HasInstallInfo(string gameId)
         {
             return this.installInfo.ContainsKey(gameId);
@@ -177,6 +182,11 @@
             installedGame.Path = path;
             if (this.installedGames == null) this.installedGames = new List<InstalledGame>();
             this.installedGames.Add(installedGame);
+        }
+
+        public void RemoveInstalledGame(string gameId)
+        {
+            this.installedGames.Remove(this.installedGames.Find(x => x.Id == gameId));
         }
 
 

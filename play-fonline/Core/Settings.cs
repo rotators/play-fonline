@@ -25,6 +25,7 @@
     public class InstalledGame
     {
         public string Id { get; set; }
+        public bool IgnoreInvalid { get; set; }
         public string Path { get; set; }
     }
 

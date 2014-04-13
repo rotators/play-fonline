@@ -23,6 +23,7 @@
         {
             foreach (var server in servers)
             {
+                server.InstallPath = null;
                 if (installHandler.IsInstalled(server.Id))
                     server.InstallPath = this.installHandler.GetInstallPath(server.Id);
             }
