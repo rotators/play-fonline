@@ -19,8 +19,6 @@
         public event ItemEventHandler<string> LaunchProgram;
         public event ItemEventHandler<bool> ShowOfflineChanged;
 
-        private List<FOGameInfo> servers;
-
         public bool AskYesNoQuestion(string question, string title)
         {
             throw new NotImplementedException();

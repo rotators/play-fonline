@@ -19,6 +19,7 @@
         private Dictionary<SetupStep, List<Control>> setupControls = new Dictionary<SetupStep, List<Control>>();
         private TextBox txtInstallPath;
 
+        public event EventHandler Cancel;
         public event EventHandler NextStep;
         public event EventHandler PreviousStep;
         public event EventHandler InstallPathSelect;
@@ -41,6 +42,7 @@
             this.btnBrowsePath.Click += InstallPathSelect;
             this.Form.btnNext.Click += NextStep;
             this.Form.btnBack.Click += PreviousStep;
+            this.Form.btnCancel.Click += Cancel;
         }
 
         public void Close()

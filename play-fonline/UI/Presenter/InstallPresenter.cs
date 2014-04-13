@@ -67,6 +67,12 @@
             this.VerifyDependency(fileName, dependency.Item);
         }
 
+        void OnCancel(object sender, EventArgs e)
+        {
+            this.IsSuccess = false;
+            this.view.Close();
+        }
+
         void OnNextStep(object sender, EventArgs e)
         {
             this.Next();
@@ -104,6 +110,7 @@
             this.view.NextStep += OnNextStep;
             this.view.PreviousStep += OnPreviousStep;
             this.view.SelectDependencyPath += OnDependencyPathSelect;
+            this.view.Cancel += OnCancel;
 
             this.view.Load();
             this.view.SetLogo(this.logoManager.GetLogoPath(game.Id));

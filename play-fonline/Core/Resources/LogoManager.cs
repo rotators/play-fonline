@@ -54,11 +54,22 @@
                 string id = ((JProperty)serverName).Name;
                 if (this.logoInfo.ContainsKey(id))
                 {
-                    if (this.logoInfo[id].Hash == logo.Hash)
-                        continue;
+                    if (!File.Exists(this.logoInfo[id].Path))
+                    {
+                        this.logger.Error("{0} not found.", this.logoInfo[id].Path);
+                    }
+                    else
+                    {
+                        if (this.logoInfo[id].Hash == logo.Hash)
+                            continue;
+                    }
                 }
-                this.DownloadLogo("http://fodev.net/status/" + logo.Path, savePath + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl("http://" + logo.Path));
-                logo.Path = savePath + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl("http://" + logo.Path);
+                if (!Directory.Exists(savePath))
+                    Directory.CreateDirectory(savePath);
+
+                string imagePath = savePath + Path.DirectorySeparatorChar + Utils.GetFilenameFromUrl("http://" + logo.Path);
+                this.DownloadLogo("http://fodev.net/status/" + logo.Path, imagePath);
+                logo.Path = imagePath;
                 this.logoInfo[id] = logo;
             }
 
@@ -77,7 +88,7 @@
                 }
                 catch (WebException e)
                 {
-                    this.logger.Error("Failed to download {0}: {1}", url, e.Message);
+                    this.logger.Error("Failed to download {0}: {1}: {2}", url, e.Message, e.InnerException.Message);
                     return;
                 }
             }

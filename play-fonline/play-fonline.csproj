@@ -89,6 +89,9 @@
     <Reference Include="ObjectListView, Version=2.4.0.35460, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>lib\ObjectListView\ObjectListView.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>lib\SharpCompress\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

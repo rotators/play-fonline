@@ -36,6 +36,7 @@
         event EventHandler NextStep;
         event EventHandler PreviousStep;
         event EventHandler InstallPathSelect;
+        event EventHandler Cancel;
         event ItemEventHandler<FOGameDependency> SelectDependencyPath;
 
         void Close();

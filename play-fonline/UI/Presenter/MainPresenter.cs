@@ -114,6 +114,7 @@
             if (this.settings == null)
             {
                 this.view.ShowError("Unable to load settings!");
+                return;
             }
 
             // Initialize settings...
@@ -179,6 +180,15 @@
             }
             else
             {
+                if (installHandler.GetInstallScriptInfo(game.Id) == null)
+                {
+                    this.view.ShowError(string.Format("No install script available for {0} :( {1} If you want to install this game anyway, download and install the game manually from {2} and then add the install directory.",
+                    game.Name,
+                    Environment.NewLine,
+                    game.Website));
+                    return false;
+                }
+
                 InstallPresenter installer = new InstallPresenter(
                     new WinFormsInstallView(),
                     game, installHandler, 
