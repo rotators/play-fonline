@@ -39,8 +39,15 @@
             return sb.ToString();
         }
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr windowHandle, uint msg, int wParam, int lParam);
+        public static IntPtr SendMessageEx(IntPtr windowHandle, uint msg, int wParam, int lParam)
+        {
+            return SendMessage(windowHandle, msg, wParam, lParam);
+        }
+
+        public static IntPtr SendMessageEx(IntPtr windowHandle, uint msg, int wParam, string lParam)
+        {
+            return SendMessage(windowHandle, msg, wParam, lParam);
+        }
 
         public static bool WindowContainsTextString(IntPtr handle, string text)
         {
@@ -95,7 +102,7 @@
         private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
         // Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
-        private static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
+        public static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
         {
             // Create list to store child window handles.
             var result = new List<IntPtr>();
@@ -119,6 +126,15 @@
             return result;
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr windowHandle, uint msg, int wParam, int lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr windowHandle, uint msg, int wParam, string lParam);
+
         // Gets text text from a control by it's handle.
         private static string GetText(IntPtr handle)
         {
@@ -137,8 +153,5 @@
             // Return the text as a string.
             return sb.ToString();
         }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
     }
 }
