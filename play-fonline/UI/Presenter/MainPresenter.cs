@@ -319,7 +319,8 @@
                 var online = servers.Where(x => !x.Status.IsOffline());
                 this.SetOnlineTitleInfo(online.Sum(x => x.Status.Players), online.Count());
 
-                this.PingServers(servers.ToList());
+                if(settings.UI.PingServers)
+                    this.PingServers(servers.ToList());
 
                 this.view.RefreshServerList(servers);
                 

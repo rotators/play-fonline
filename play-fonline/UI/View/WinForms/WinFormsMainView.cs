@@ -128,6 +128,12 @@
             this.Main.DesktopLocation = new Point(settings.X, settings.Y);
             this.Main.Width = settings.Width;
             this.Main.Height = settings.Height;
+
+            if (!settings.PingServers)
+            {
+                this.Main.olvPing.IsVisible = false;
+                this.Main.lstGames.RebuildColumns();
+            }
         }
 
         public UISettings GetWindowProperties()

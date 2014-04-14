@@ -39,6 +39,7 @@
     public class UISettings
     {
         public int Height { get; set; }
+        public bool PingServers { get; set; }
         public bool ShowOffline { get; set; }
         public int Width { get; set; }
         public int X { get; set; }
