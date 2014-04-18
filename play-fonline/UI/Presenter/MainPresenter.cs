@@ -162,14 +162,18 @@
 
             var jsonNode = jsonFetch.DownloadJson(this.settings.InstallUrl);
             this.installHandler = new InstallHandler(jsonDeserialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
+            this.logger.Debug("Installhandler initialized.");
             this.logoManager = new LogoManager(this.settings.Paths.Logos, this.settings.LogoUrl);
+            this.logger.Debug("Logos initialized.");
             this.serverManager = new ServerManager(
                 new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl, new NLogWrapper("FOQuery")),
                 this.installHandler);
-
+            this.logger.Debug("Servermanager initialized.");
             this.VerifyInstalledGames();
+            this.logger.Debug("Verified installed games.");
             this.view.UpdateStatusBar("Updating game list...");
             this.UpdateGameList();
+            this.logger.Debug("Games updated.");
         }
 
         private bool AddGame(FOGameInfo game)
@@ -292,7 +296,15 @@
         {
             List<FOGameInfo> servers = this.serverManager.GetServers(false);
             List<InstalledGame> removeGames = new List<InstalledGame>();
-            foreach (InstalledGame installGame in this.installHandler.GetInstalledGames())
+
+            List<InstalledGame> installedGames = this.installHandler.GetInstalledGames();
+            if(installedGames == null) 
+            {
+                this.logger.Info("No games installed to verify, returning.");    
+                return;
+            }
+
+            foreach (InstalledGame installGame in installedGames)
             {
                 if(installGame.IgnoreInvalid)
                     continue;
