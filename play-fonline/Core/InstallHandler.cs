@@ -97,6 +97,8 @@
 
         private void DownloadInstallScript(string url, string localPath)
         {
+            
+
             this.logger.Info("Downloading {0} to {1}", url, localPath);
             WebClient webClient = new WebClient();
             webClient.DownloadFile(url, localPath);
@@ -109,6 +111,10 @@
             FOScriptInfo installScriptInfo = this.GetInstallScriptInfo(game.Id);
 
             string scriptName = Utils.GetFilenameFromUrl(installScriptInfo.Url);
+
+            if (!Directory.Exists(scriptPath))
+                Directory.CreateDirectory(scriptPath);
+
             string localScriptPath = Path.Combine(scriptPath, scriptName);
 
             // File exists, verify if checksum is the same...

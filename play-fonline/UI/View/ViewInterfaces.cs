@@ -61,6 +61,7 @@
         event EventHandler<FOGameInfo> InstallGame;
         event EventHandler<FOGameInfo> ChangedGame;
         event ItemEventHandler<string> LaunchProgram;
+        event ItemEventHandler<bool> PingChanged;
         event ItemEventHandler<bool> ShowOfflineChanged;
 
         new bool AskYesNoQuestion(string question, string title);
@@ -68,7 +69,7 @@
 
         new void ShowError(string errorMsg);
         new void ShowInfo(string infoMsg);
-        void RefreshServerList(List<FOGameInfo> servers);
+        void RefreshServerList(List<FOGameInfo> servers, bool pingServers);
 
         void UpdateStatusBar(string text);
         UISettings GetWindowProperties();

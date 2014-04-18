@@ -63,6 +63,7 @@
             this.statusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.linkFoDev = new System.Windows.Forms.LinkLabel();
+            this.chkPing = new System.Windows.Forms.CheckBox();
             this.frmMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.flowMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lstGames)).BeginInit();
@@ -90,12 +91,13 @@
             // 
             // chkShowOffline
             // 
+            this.chkShowOffline.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkShowOffline.AutoSize = true;
-            this.chkShowOffline.Location = new System.Drawing.Point(130, 12);
+            this.chkShowOffline.Location = new System.Drawing.Point(715, 97);
             this.chkShowOffline.Name = "chkShowOffline";
-            this.chkShowOffline.Size = new System.Drawing.Size(121, 17);
+            this.chkShowOffline.Size = new System.Drawing.Size(125, 17);
             this.chkShowOffline.TabIndex = 8;
-            this.chkShowOffline.Text = "Show offline servers";
+            this.chkShowOffline.Text = "Show Offline Servers";
             this.chkShowOffline.UseVisualStyleBackColor = true;
             // 
             // lstGames
@@ -123,10 +125,10 @@
             this.lstGames.Cursor = System.Windows.Forms.Cursors.Default;
             this.lstGames.FullRowSelect = true;
             this.lstGames.HasCollapsibleGroups = false;
-            this.lstGames.Location = new System.Drawing.Point(130, 35);
+            this.lstGames.Location = new System.Drawing.Point(130, 12);
             this.lstGames.Name = "lstGames";
             this.lstGames.ShowGroups = false;
-            this.lstGames.Size = new System.Drawing.Size(662, 355);
+            this.lstGames.Size = new System.Drawing.Size(579, 389);
             this.lstGames.TabIndex = 7;
             this.lstGames.UseCompatibleStateImageBehavior = false;
             this.lstGames.UseHyperlinks = true;
@@ -183,7 +185,7 @@
             this.statusBarLabel});
             this.statusBar.Location = new System.Drawing.Point(0, 404);
             this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size(804, 22);
+            this.statusBar.Size = new System.Drawing.Size(836, 22);
             this.statusBar.TabIndex = 9;
             this.statusBar.Text = "statusStrip1";
             // 
@@ -194,9 +196,10 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(257, 8);
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Location = new System.Drawing.Point(715, 35);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(87, 23);
+            this.btnRefresh.Size = new System.Drawing.Size(116, 33);
             this.btnRefresh.TabIndex = 10;
             this.btnRefresh.Text = "Update list";
             this.btnRefresh.UseVisualStyleBackColor = true;
@@ -205,12 +208,23 @@
             // 
             this.linkFoDev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkFoDev.AutoSize = true;
-            this.linkFoDev.Location = new System.Drawing.Point(709, 12);
+            this.linkFoDev.Location = new System.Drawing.Point(715, 12);
             this.linkFoDev.Name = "linkFoDev";
             this.linkFoDev.Size = new System.Drawing.Size(83, 13);
             this.linkFoDev.TabIndex = 14;
             this.linkFoDev.TabStop = true;
             this.linkFoDev.Text = "http://fodev.net";
+            // 
+            // chkPing
+            // 
+            this.chkPing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPing.AutoSize = true;
+            this.chkPing.Location = new System.Drawing.Point(715, 74);
+            this.chkPing.Name = "chkPing";
+            this.chkPing.Size = new System.Drawing.Size(86, 17);
+            this.chkPing.TabIndex = 15;
+            this.chkPing.Text = "Ping Servers";
+            this.chkPing.UseVisualStyleBackColor = true;
             // 
             // frmMainBindingSource
             // 
@@ -220,7 +234,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 426);
+            this.ClientSize = new System.Drawing.Size(836, 426);
+            this.Controls.Add(this.chkPing);
             this.Controls.Add(this.linkFoDev);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.statusBar);
@@ -241,6 +256,8 @@
         }
 
         #endregion
+
+        public System.Windows.Forms.CheckBox chkPing;
 
     }
 }

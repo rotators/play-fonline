@@ -48,6 +48,12 @@
             JsonFetcher jsonFetcher = new JsonFetcher(new NLogWrapper("FOQuery"));
             JObject o = jsonFetcher.DownloadJson(logoUrl);
 
+            if (o == null)
+            {
+                logger.Error("Returned JSON node is null.");
+                return;
+            }
+
             foreach (JToken serverName in o["fonline"]["logo"].Children())
             {
                 FOLogoInfo logo = JsonConvert.DeserializeObject<FOLogoInfo>(serverName.First.ToString());

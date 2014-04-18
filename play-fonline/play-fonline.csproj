@@ -110,12 +110,6 @@
     <Compile Include="Core\Downloader.cs" />
     <Compile Include="Core\ServerManager.cs" />
     <Compile Include="Core\NLogWrapper.cs" />
-    <Compile Include="Forms\frmAbout.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmAbout.Designer.cs">
-      <DependentUpon>frmAbout.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\frmDownload.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,9 +155,6 @@
     <Compile Include="UI\View\WinForms\WinFormsDownloadView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsInstallView.cs" />
     <Compile Include="UI\View\WinForms\WinFormsMainView.cs" />
-    <EmbeddedResource Include="Forms\frmAbout.resx">
-      <DependentUpon>frmAbout.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmDownload.resx">
       <DependentUpon>frmDownload.cs</DependentUpon>
     </EmbeddedResource>

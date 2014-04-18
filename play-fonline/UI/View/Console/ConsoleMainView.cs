@@ -18,6 +18,7 @@
         public event EventHandler<FOGameInfo> ChangedGame;
         public event ItemEventHandler<string> LaunchProgram;
         public event ItemEventHandler<bool> ShowOfflineChanged;
+        public event ItemEventHandler<bool> PingChanged;
 
         public bool AskYesNoQuestion(string question, string title)
         {
@@ -70,7 +71,7 @@
             }
         }
 
-        public void RefreshServerList(List<FOGameInfo> servers)
+        public void RefreshServerList(List<FOGameInfo> servers, bool pingServers)
         {
             //Console.Clear();
             PrintRow("", "", "", "");

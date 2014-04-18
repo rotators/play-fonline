@@ -22,6 +22,7 @@
         public event EventHandler<FOGameInfo> ChangedGame;
         public event ItemEventHandler<string> LaunchProgram;
         public event ItemEventHandler<bool> ShowOfflineChanged;
+        public event ItemEventHandler<bool> PingChanged;
 
         public void Load()
         {
@@ -55,9 +56,15 @@
 
             this.Main.btnRefresh.Click += RefreshServers;
             this.Main.chkShowOffline.CheckedChanged += new EventHandler(chkShowOffline_CheckedChanged);
+            this.Main.chkPing.CheckedChanged += new EventHandler(chkPing_CheckedChanged);
             this.Main.linkFoDev.Click += FoDevLinkClicked;
             this.Main.lstGames.SelectionChanged += new EventHandler(lstGames_SelectedIndexChanged);
             this.Main.btnInstall.Click += new EventHandler(btnInstall_Click);
+        }
+
+        void chkPing_CheckedChanged(object sender, EventArgs e)
+        {
+            PingChanged(this, new ItemEventArgs<bool>(this.Main.chkPing.Checked));
         }
 
         public void StartApplication()
@@ -120,7 +127,10 @@
 
         public void SetTitle(string title)
         {
-            this.Main.Text = title;
+            if (this.Main.InvokeRequired)
+                this.Main.Invoke((MethodInvoker)delegate { this.Main.Text = title; });
+            else
+                this.Main.Text = title;
         }
 
         public void SetWindowProperties(UISettings settings)
@@ -128,12 +138,6 @@
             this.Main.DesktopLocation = new Point(settings.X, settings.Y);
             this.Main.Width = settings.Width;
             this.Main.Height = settings.Height;
-
-            if (!settings.PingServers)
-            {
-                this.Main.olvPing.IsVisible = false;
-                this.Main.lstGames.RebuildColumns();
-            }
         }
 
         public UISettings GetWindowProperties()
@@ -143,18 +147,35 @@
             settings.Y = this.Main.DesktopLocation.Y;
             settings.Width = this.Main.Width;
             settings.Height = this.Main.Height;
+            settings.PingServers = this.Main.chkPing.Checked;
+            settings.ShowOffline = this.Main.chkShowOffline.Checked;
             return settings;
         }
 
-        public void RefreshServerList(List<FOGameInfo> servers)
+        public void RefreshServerList(List<FOGameInfo> servers, bool pingServers)
         {
-            this.Main.lstGames.SetObjects(servers);
-            this.Main.lstGames.Refresh();
+            if (this.Main.lstGames.InvokeRequired)
+            {
+                this.Main.Invoke((MethodInvoker)delegate{
+                    this.RefreshServerList(servers, pingServers);
+                });
+            }
+            else
+            {
+                this.Main.olvPing.IsVisible = pingServers;
+                this.Main.lstGames.RebuildColumns();
+
+                this.Main.lstGames.SetObjects(servers);
+                this.Main.lstGames.Refresh();
+            }
         }
 
         public void UpdateStatusBar(string text)
         {
-            this.Main.statusBarLabel.Text = DateTime.Now + " | " + text;
+            if (this.Main.InvokeRequired)
+                this.Main.Invoke((MethodInvoker)delegate { this.Main.statusBarLabel.Text = DateTime.Now + " | " + text; });
+            else
+                this.Main.statusBarLabel.Text = DateTime.Now + " | " + text;
         }
     }
 }

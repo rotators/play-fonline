@@ -1,6 +1,7 @@
 ﻿namespace FOQuery.Json
 {
     using System.Net;
+    using System.IO;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     //using NLog;
@@ -10,20 +11,32 @@
         private JsonReaderException jsonException;
         private WebException webException;
         private ILogger logger;
+        private string jsonContent;
 
         public JsonFetcher(ILogger logger)
         {
             this.logger = logger;
         }
 
+        private string GetJson()
+        {
+            return this.jsonContent;
+        }
+
         public JObject DownloadJson(string url)
         {
-            string jsonContent = this.FetchJson(url);
+            this.jsonContent = this.FetchJson(url);
             return this.ParseJson(jsonContent);
         }
 
         private string FetchJson(string url)
         {
+            if (url == null || !url.Contains("http://"))
+            {
+                this.logger.Error("Invalid url: {0}", url);
+                return string.Empty;
+            }
+
             string jsonContent;
             using (var webClient = new System.Net.WebClient())
             {

@@ -14,9 +14,11 @@
         public List<FOGameDependency> Dependencies { get; set; }
         public List<InstalledGame> Games { get; set; }
 
+        public string CheckUrl { get; set; }
         public string CombinedUrl { get; set; }
         public string InstallUrl { get; set; }
         public string StatusUrl { get; set; }
+        public string LogoUrl { get; set; }
 
         public PathSettings Paths { get; set; }
         public UISettings UI { get; set; }
@@ -31,6 +33,7 @@
 
     public class PathSettings
     {
+        public string Cache { get; set; }
         public string DownloadTemp { get; set; }
         public string Scripts { get; set; }
         public string Logos { get; set; }

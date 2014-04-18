@@ -14,6 +14,7 @@
     using PlayFOnline.Core;
     using PlayFOnline.UI.View;
     using NLog;
+    using System.ComponentModel;
     
 
     public interface IMainPresenter
@@ -28,6 +29,7 @@
     {
         IMainView view;
         bool showOffline;
+        bool pingServers;
 
         private ServerManager serverManager;
         private LogoManager logoManager;
@@ -67,7 +69,13 @@
 
         void OnShowOfflineChanged(object sender, ItemEventArgs<bool> mode)
         {
-            showOffline = mode.Item;
+            this.showOffline = mode.Item;
+            this.UpdateGameList();
+        }
+
+        void OnPingChanged(object sender, ItemEventArgs<bool> mode)
+        {
+            this.pingServers = mode.Item;
             this.UpdateGameList();
         }
 
@@ -105,6 +113,7 @@
             this.view.InstallGame += OnInstallGame;
             this.view.LaunchProgram += OnLaunchProgram;
             this.view.ShowOfflineChanged += OnShowOfflineChanged;
+            this.view.PingChanged += OnPingChanged;
 
             this.view.Load();
             this.view.SetTitle(this.GetBaseTitle());
@@ -133,22 +142,34 @@
                 this.settings.Paths.Logos        = Path.Combine(baseDir, "logos");
             }
 
+            this.pingServers = this.settings.UI.PingServers;
+
             WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.
 
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            bw.RunWorkerAsync();
+            
+            this.view.StartApplication();
+        }
+
+        void bw_DoWork(object sender, DoWorkEventArgs e)
+        {
             JsonFetcher jsonFetch = new JsonFetcher(new NLogWrapper("FOQuery"));
             FOJsonDeserializer jsonDeserialize = new FOJsonDeserializer();
 
+            this.view.UpdateStatusBar("Downloading data...");
+
             var jsonNode = jsonFetch.DownloadJson(this.settings.InstallUrl);
             this.installHandler = new InstallHandler(jsonDeserialize.GetInstallData(jsonNode), settings.Games, settings.Dependencies);
-            this.logoManager = new LogoManager(this.settings.Paths.Logos, "http://fodev.net/status/json/logo/");
+            this.logoManager = new LogoManager(this.settings.Paths.Logos, this.settings.LogoUrl);
             this.serverManager = new ServerManager(
-                new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl, new NLogWrapper("FOQuery")), 
+                new FOServerJson(settings.ConfigUrl, settings.StatusUrl, settings.CombinedUrl, new NLogWrapper("FOQuery")),
                 this.installHandler);
 
-            this.UpdateGameList();
             this.VerifyInstalledGames();
-
-            this.view.StartApplication();
+            this.view.UpdateStatusBar("Updating game list...");
+            this.UpdateGameList();
         }
 
         private bool AddGame(FOGameInfo game)
@@ -238,7 +259,7 @@
         {
             Action refreshDisplay = delegate()
             {
-                this.view.RefreshServerList(servers);
+                this.view.RefreshServerList(servers, true);
             };
             this.serverManager.GetServers(true).ForEach(x => x.Ping(refreshDisplay));
         }
@@ -304,10 +325,10 @@
             }
 
             SaveInstalledStatus();
-            this.view.RefreshServerList(serverManager.GetServers(!this.showOffline));
+            this.view.RefreshServerList(serverManager.GetServers(!this.showOffline), this.pingServers);
         }
 
-        public void UpdateGameList()
+        public bool UpdateGameList()
         {
             this.view.UpdateStatusBar("Updating gamelist...");
             try
@@ -319,14 +340,14 @@
                 var online = servers.Where(x => !x.Status.IsOffline());
                 this.SetOnlineTitleInfo(online.Sum(x => x.Status.Players), online.Count());
 
-                if(settings.UI.PingServers)
+                if(this.pingServers)
                     this.PingServers(servers.ToList());
 
-                this.view.RefreshServerList(servers);
+                this.view.RefreshServerList(servers, pingServers);
                 
                 this.view.UpdateStatusBar("Updated gamelist.");
 
-                return;
+                return true;
             }
             catch (System.Net.WebException e)
             {
@@ -337,6 +358,7 @@
                 this.view.ShowError(string.Format("{0}{1}Please see log for more information.", e.Message, Environment.NewLine));
             }
             this.view.UpdateStatusBar("Failed to update gamelist.");
+            return false;
         }
     }
 }
