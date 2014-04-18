@@ -138,7 +138,7 @@
             }
             else if (step == SetupStep.Install)
             {
-
+                this.installPath = this.view.GetInstallPath();
                 this.view.Close();
                 if (!this.installHandler.InstallGame(this.game, this.scriptPath, this.tempPath, this.installPath, selectedDependencies.Values.ToList(), this.view.ReviewCode()))
                 {

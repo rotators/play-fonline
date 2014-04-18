@@ -142,6 +142,10 @@
                 this.settings.Paths.Logos        = Path.Combine(baseDir, "logos");
             }
 
+            if (!Directory.Exists(this.settings.Paths.DownloadTemp)) Directory.CreateDirectory(this.settings.Paths.DownloadTemp);
+            if (!Directory.Exists(this.settings.Paths.Scripts)) Directory.CreateDirectory(this.settings.Paths.Scripts);
+            if (!Directory.Exists(this.settings.Paths.Logos)) Directory.CreateDirectory(this.settings.Paths.Logos);
+
             this.pingServers = this.settings.UI.PingServers;
 
             WebRequest.DefaultWebProxy = null; // Avoid possible lag due to .NET trying to resolve non-existing proxy.

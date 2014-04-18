@@ -47,6 +47,7 @@
         void SetTitle(string text);
         void SetLogo(string fileName);
         void SetSetupText(string text);
+        string GetInstallPath();
         void SetInstallPath(string text);
         void SetDependencyPath(FOGameDependency dependency, string path);
         void SetDependencies(List<FOGameDependency> dependencies);

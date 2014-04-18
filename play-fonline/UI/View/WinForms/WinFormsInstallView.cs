@@ -56,6 +56,11 @@
             this.Form.ShowDialog();
         }
 
+        public string GetInstallPath()
+        {
+            return txtInstallPath.Text;
+        }
+
         public void SetInstallPath(string text)
         {
             txtInstallPath.Text = text;

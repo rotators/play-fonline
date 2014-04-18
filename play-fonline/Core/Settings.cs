@@ -14,7 +14,6 @@
         public List<FOGameDependency> Dependencies { get; set; }
         public List<InstalledGame> Games { get; set; }
 
-        public string CheckUrl { get; set; }
         public string CombinedUrl { get; set; }
         public string InstallUrl { get; set; }
         public string StatusUrl { get; set; }
