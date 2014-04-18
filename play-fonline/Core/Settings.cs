@@ -33,7 +33,6 @@
 
     public class PathSettings
     {
-        public string Cache { get; set; }
         public string DownloadTemp { get; set; }
         public string Scripts { get; set; }
         public string Logos { get; set; }
